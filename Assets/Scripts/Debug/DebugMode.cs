@@ -1,4 +1,9 @@
 public class DebugMode
 {
-    public static bool DebugModeActive = true;
+    public static bool DebugModeActive =
+#if UNITY_EDITOR
+        true;
+#else
+        false;
+#endif
 }
