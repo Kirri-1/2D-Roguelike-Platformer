@@ -3,19 +3,21 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Dash))]
+[RequireComponent(typeof(CancelMovementEnums))]
 public class Movement : MonoBehaviour
 {
     PlayerMovement playerMovement;
     InputAction moveAction;
     public float moveSpeed = 5f;
     private Rigidbody2D playerRb;
-    Dash dash;
+    CancelMovementEnums cancelMovementEnums;
+    public CancelMovementEnums.CancelMovementType cancelMovementType = CancelMovementEnums.CancelMovementType.None;
 
     private void Awake()
     {
         playerMovement = new PlayerMovement();
-        dash = GetComponent<Dash>();
         moveAction = playerMovement.Player.Movement;
+        cancelMovementEnums = GetComponent<CancelMovementEnums>();
     }
     private void OnEnable()
     {
@@ -39,7 +41,7 @@ public class Movement : MonoBehaviour
 
     private void Move()
     {
-        if (dash.isDashing)
+        if (cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
             return;
 
         Vector2 moveInput = moveAction.ReadValue<Vector2>();

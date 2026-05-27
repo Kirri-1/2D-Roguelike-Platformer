@@ -1,12 +1,16 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static CancelMovementEnums;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(GroundCheck))]
+[RequireComponent(typeof(CancelMovementEnums))]
 public class Jump : MonoBehaviour
 {
     GroundCheck groundCheck;
     Rigidbody2D playerRb;
+    CancelMovementEnums cancelMovementEnums;
     PlayerMovement playerMovement;
     InputAction jumpAction;
     Coroutine jumpCoroutine;
@@ -16,9 +20,16 @@ public class Jump : MonoBehaviour
 
     public bool jumpRequested = false;
 
+    HashSet<CancelMovementEnums.CancelMovementType> jumpCancelEnums = new HashSet<CancelMovementEnums.CancelMovementType>()
+    {
+        CancelMovementEnums.CancelMovementType.Attack,
+        CancelMovementEnums.CancelMovementType.Stun
+    };
+
     private void Awake()
     {
         playerRb = GetComponent<Rigidbody2D>();
+        cancelMovementEnums = GetComponent<CancelMovementEnums>();
         groundCheck = GetComponent<GroundCheck>();
         playerMovement = new PlayerMovement();
         jumpAction = playerMovement.Player.Jump;
@@ -46,23 +57,19 @@ public class Jump : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(jumpRequested)
+        if (jumpRequested && !cancelMovementEnums.HasAnyFlag(jumpCancelEnums))
         {
-            JumpVoid();
+            if(jumpStruct.HasCharges)
+                JumpVoid();
         }
     }
 
     void JumpVoid()
     {
-        if (!jumpStruct.HasCharges)
-        {
-            jumpRequested = false;
-            return;
-        }
-        jumpStruct.currentCharge--;
         playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 0f);
         playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         jumpRequested = false;
+        jumpStruct.ConsumeCharge();
         if (DebugMode.DebugModeActive)
             Debug.Log("Player Jumped");
     }
@@ -72,4 +79,5 @@ public class Jump : MonoBehaviour
         if(groundCheck.isGrounded)
             jumpStruct.ResetCharges();
     }
+    
 }

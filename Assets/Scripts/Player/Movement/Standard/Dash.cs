@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(CancelMovementEnums))]
 public class Dash : MonoBehaviour
 {
     public MovementStruct dashStruct;
@@ -13,7 +14,6 @@ public class Dash : MonoBehaviour
     Rigidbody2D playerRb;
     GroundCheck groundCheck;
 
-    public bool isDashing;
 
     public float dashSpeed = 20f;
     public float dashDuration = 0.5f;
@@ -22,6 +22,8 @@ public class Dash : MonoBehaviour
     private float maxSpeed = 40f; // Maximum speed to prevent excessive velocity
 
     Coroutine dashCoroutine;
+
+    CancelMovementEnums cancelMovementEnums;
     private void Awake()
     {
         groundCheck = GetComponent<GroundCheck>();
@@ -29,6 +31,7 @@ public class Dash : MonoBehaviour
         playerMovement = new PlayerMovement();
         dashAction = playerMovement.Player.Dash;
         moveAction = playerMovement.Player.Movement;
+        cancelMovementEnums = GetComponent<CancelMovementEnums>();
     }
 
     private void OnEnable()
@@ -53,8 +56,9 @@ public class Dash : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if(dashRequested)
+        if(dashRequested && cancelMovementEnums.cancelMovementType == CancelMovementEnums.CancelMovementType.None)
         {
+            if(dashStruct.HasCharges)
             DashVoid();
             dashRequested = false;
         }
@@ -62,46 +66,40 @@ public class Dash : MonoBehaviour
 
     void DashVoid()
     {
-        if (!dashStruct.HasCharges)
-        {
-            dashRequested = false;
-            return;
-        }
-
-        dashStruct.currentCharge--;
+        cancelMovementEnums.AddCancelMovementType(CancelMovementEnums.CancelMovementType.Dash);
         Vector2 moveInput = moveAction.ReadValue<Vector2>();
-
-        if (moveInput == Vector2.zero)
-        {
-            Debug.Log("Dash attempted with no movement input. Dash cancelled.");
-            return; //nothing happened
-        }
+        bool isMoving = moveInput != Vector2.zero;
 
         Vector2 dashDirection = moveInput.normalized;
 
         playerRb.linearVelocity = Vector2.zero;
-        if(playerRb.linearVelocity.magnitude > maxSpeed)
+        if (isMoving)
         {
-            playerRb.linearVelocity = playerRb.linearVelocity.normalized * maxSpeed;
-        }
-        if (dashDirection.y < -0.5f)
-        {
-            if(DebugMode.DebugModeActive)
-                Debug.Log("Stomping downwards!");
-            playerRb.AddForce(dashDirection * (dashSpeed * 1.5f), ForceMode2D.Impulse);
+            if (dashDirection.y < -0.5f)
+            {
+                if (DebugMode.DebugModeActive)
+                    Debug.Log("Stomping downwards!");
+                playerRb.AddForce(dashDirection * (dashSpeed * 1.5f), ForceMode2D.Impulse);
+            }
+            else
+            {
+                playerRb.AddForce(dashDirection * dashSpeed, ForceMode2D.Impulse);
+                if (DebugMode.DebugModeActive)
+                    Debug.Log($"Dashed in direction: {dashDirection}");
+            }
         }
         else
         {
-            playerRb.AddForce(dashDirection * dashSpeed, ForceMode2D.Impulse);
+            playerRb.AddForce(Vector2.right * dashSpeed, ForceMode2D.Impulse);
             if (DebugMode.DebugModeActive)
-                Debug.Log($"Dashed in direction: {dashDirection}");
+                Debug.Log("Dashed forward with no input direction!");
         }
-        if(dashCoroutine != null)
+        if (dashCoroutine != null)
         {
             StopCoroutine(dashCoroutine);
-            isDashing = false;
         }
         dashCoroutine = StartCoroutine(DashCoroutine());
+        dashStruct.ConsumeCharge();
     }
 
     void ResetDash()
@@ -114,8 +112,7 @@ public class Dash : MonoBehaviour
 
     public IEnumerator DashCoroutine()
     {
-        isDashing = true;
         yield return new WaitForSeconds(dashDuration);
-        isDashing = false;
+        cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Dash);
     }
 }
