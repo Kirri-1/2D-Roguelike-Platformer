@@ -2,16 +2,15 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-//TODO: Refactor to use BlinkData struct from PlayerData
-
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CancelMovementEnums))]
 [RequireComponent(typeof(CapsuleCollider2D))]
+[RequireComponent(typeof(PlayerData))]
 public class Blink : MonoBehaviour
 {
     Rigidbody2D playerRb;
     CapsuleCollider2D playerCollider;
-    public MovementStruct blinkStruct;
+    PlayerData playerData;
 
     PlayerMovement playerMovement;
     InputAction blinkAction;
@@ -36,6 +35,7 @@ public class Blink : MonoBehaviour
     LayerMask ignorePlayer;
     private void Awake()
     {
+        playerData = GetComponent<PlayerData>();
         playerCollider = GetComponent<CapsuleCollider2D>();
         playerRb = GetComponent<Rigidbody2D>();
         playerMovement = new PlayerMovement();
@@ -70,7 +70,7 @@ public class Blink : MonoBehaviour
     {
         if(blinkRequested)
         {
-            if(blinkStruct.HasCharges)
+            if(playerData.blinkData.blinkStruct.HasCharges && playerData.blinkData.blinkStruct.IsUnlocked)
                 BlinkVoid();
             blinkRequested = false;
         }
@@ -90,16 +90,16 @@ public class Blink : MonoBehaviour
         Vector2 moveDirection = blinkDirection.normalized;
 
         Vector2 castSize = new Vector2(playerCollider.bounds.size.x, playerCollider.bounds.size.y * 0.9f);
-        var hit = Physics2D.BoxCast(transform.position, castSize, 0, moveDirection, blinkDistance, ~ignorePlayer);
+        var hit = Physics2D.BoxCast(transform.position, castSize, 0, moveDirection, playerData.blinkData.BlinkDistance, ~ignorePlayer);
         if (hit.collider == null)
         {
-            newLocation = (Vector2)transform.position + blinkDirection * blinkDistance;
+            newLocation = (Vector2)transform.position + blinkDirection * playerData.blinkData.BlinkDistance;
             transform.position = newLocation;
         }
         else
         {
             newLocation = (Vector2)transform.position + blinkDirection * hit.distance;
-            if (hit.distance < 5f)
+            if (hit.distance < playerData.blinkData.BlinkDistanceCheck)
             {
                 cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
                 if (DebugMode.DebugModeActive)
@@ -116,14 +116,14 @@ public class Blink : MonoBehaviour
             StopCoroutine(blinkCoroutine);
         }
         blinkCoroutine = StartCoroutine(BlinkCoroutine());
-        blinkStruct.ConsumeCharge();
+        playerData.blinkData.blinkStruct.ConsumeCharge();
     }
 
     void ResetBlink()
     {
         if (groundCheck.isGrounded)
         {
-            blinkStruct.ResetCharges();
+            playerData.blinkData.blinkStruct.ResetCharges();
         }
     }
 
@@ -139,6 +139,6 @@ public class Blink : MonoBehaviour
         return moveInput;
     }
 
-    public void IncreaseBlinkCount(int amount = 1) => blinkStruct.IncreaseCharge(amount);
-    public void IncreaseBlinkDistance(float amount = 1f) => blinkDistance += amount;
+    public void IncreaseBlinkCount(int amount = 1) => playerData.blinkData.blinkStruct.IncreaseCharge(amount);
+    public void ModifyBlinkDistance(float amount = 1f) => playerData.blinkData.ModifyDistance(amount);
 }

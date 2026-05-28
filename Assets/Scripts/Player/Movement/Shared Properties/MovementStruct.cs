@@ -29,6 +29,7 @@ public struct MovementStruct
     }
 
     public void Unlock() => isUnlocked = true;
+    public void Lock() => isUnlocked = false;
 
     public void SetDefaults(int defaultCharges, bool unlock = false)
     {

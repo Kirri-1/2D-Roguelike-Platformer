@@ -6,15 +6,20 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CancelMovementEnums))]
+[RequireComponent(typeof(PlayerData))]
 public class Dash : MonoBehaviour
 {
-    public MovementStruct dashStruct;
+    PlayerData playerData;
     PlayerMovement playerMovement;
+
     InputAction dashAction;
     InputAction moveAction;
+
     bool dashRequested = false;
+
     Rigidbody2D playerRb;
     GroundCheck groundCheck;
+
     [Header("Dash Settings")]
     [SerializeField]
     [Tooltip("The speed at which the player will dash.")]
@@ -30,6 +35,7 @@ public class Dash : MonoBehaviour
     CancelMovementEnums cancelMovementEnums;
     private void Awake()
     {
+        playerData = GetComponent<PlayerData>();
         groundCheck = GetComponent<GroundCheck>();
         playerRb = GetComponent<Rigidbody2D>();
         playerMovement = new PlayerMovement();
@@ -62,7 +68,7 @@ public class Dash : MonoBehaviour
     {
         if(dashRequested && cancelMovementEnums.cancelMovementType == CancelMovementEnums.CancelMovementType.None)
         {
-            if(dashStruct.HasCharges)
+            if(playerData.dashData.dashStruct.HasCharges && playerData.dashData.dashStruct.IsUnlocked)
             DashVoid();
             dashRequested = false;
         }
@@ -76,14 +82,14 @@ public class Dash : MonoBehaviour
             StopCoroutine(dashCoroutine);
         }
         dashCoroutine = StartCoroutine(DashCoroutine());
-        dashStruct.ConsumeCharge();
+        playerData.dashData.dashStruct.ConsumeCharge();
     }
 
     void ResetDash()
     {
         if(groundCheck.isGrounded)
         {
-            dashStruct.ResetCharges();
+            playerData.dashData.dashStruct.ResetCharges();
         }
     }
 
@@ -94,9 +100,9 @@ public class Dash : MonoBehaviour
         dashDirection = dashDirection.normalized;
 
         float elapsed = 0f;
-        while (elapsed < dashDuration)
+        while (elapsed < playerData.dashData.DashDuration)
         {
-            playerRb.linearVelocity = dashDirection * dashSpeed;
+            playerRb.linearVelocity = dashDirection * playerData.dashData.DashSpeed;
             elapsed += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
@@ -105,7 +111,7 @@ public class Dash : MonoBehaviour
         cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Dash);
     }
 
-    public void IncreaseDashCharge(int amount = 1) => dashStruct.IncreaseCharge(amount);
-    public void IncreaseDashDuration(float amount = 0.5f) => dashDuration += amount;
-    public void IncreaseDashSpeed(float amount = 1f) => dashSpeed += amount;
+    public void IncreaseDashCharge(int amount = 1) => playerData.dashData.dashStruct.IncreaseCharge(amount);
+    public void IncreaseDashDuration(float amount = 0.5f) => playerData.dashData.ModifyDuration(amount);
+    public void IncreaseDashSpeed(float amount = 1f) => playerData.dashData.ModifySpeed(amount);
 }

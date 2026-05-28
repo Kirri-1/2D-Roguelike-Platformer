@@ -7,6 +7,10 @@ public struct MovementData
     float movementSpeed;
     public float MovementSpeed => movementSpeed;
 
+    [SerializeField]
+    bool isUnlocked;
+    public bool IsUnlocked => isUnlocked;
+
     public void ModifyMovementSpeed(float amount)
     {
           movementSpeed += amount;
@@ -17,8 +21,12 @@ public struct MovementData
         movementSpeed = newSpeed;
     }
 
+    public void Unlock() => isUnlocked = true;
+    public void Lock() => isUnlocked = false;
+
     public void SetDefaults()
     {
-        movementSpeed = 5f;
+        movementSpeed = 10f;
+        isUnlocked = true;
     }
 }

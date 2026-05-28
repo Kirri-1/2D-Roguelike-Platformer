@@ -8,7 +8,7 @@ public struct JumpData
     float jumpForce;
     public float JumpForce => jumpForce;
 
-    public void IncreaseJumpForce(float amount)
+    public void ModifyJumpForce(float amount)
     {
         jumpForce += amount;
     }
@@ -20,7 +20,7 @@ public struct JumpData
 
     public void SetDefaults()
     {
-        jumpForce = 10f;
+        jumpForce = 15f;
         jumpStruct.SetDefaults(1, true);
     }
 }

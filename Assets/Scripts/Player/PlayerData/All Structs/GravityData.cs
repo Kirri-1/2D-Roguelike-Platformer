@@ -12,7 +12,7 @@ public struct GravityData
     float defaultGravityScale;
     public float DefaultGravityScale => defaultGravityScale;
 
-    public float IncreaseGravityScale(float amount)
+    public float ModifyGravityScale(float amount)
     {
         gravityScale += amount;
         return gravityScale;

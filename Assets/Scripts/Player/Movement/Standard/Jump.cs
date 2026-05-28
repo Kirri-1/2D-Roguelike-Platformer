@@ -2,21 +2,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-//TODO: Refactor to use JumpData struct from PlayerData
-
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(GroundCheck))]
 [RequireComponent(typeof(CancelMovementEnums))]
+[RequireComponent(typeof(PlayerData))]
 public class Jump : MonoBehaviour
 {
     GroundCheck groundCheck;
     Rigidbody2D playerRb;
     CancelMovementEnums cancelMovementEnums;
+
+    PlayerData playerData;
     PlayerMovement playerMovement;
     InputAction jumpAction;
-
-    public float jumpForce = 10f;
-    public MovementStruct jumpStruct;
 
     public bool jumpRequested = false;
 
@@ -28,6 +26,7 @@ public class Jump : MonoBehaviour
 
     private void Awake()
     {
+        playerData = GetComponent<PlayerData>();
         playerRb = GetComponent<Rigidbody2D>();
         cancelMovementEnums = GetComponent<CancelMovementEnums>();
         groundCheck = GetComponent<GroundCheck>();
@@ -57,9 +56,10 @@ public class Jump : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (jumpRequested && !cancelMovementEnums.HasAnyFlag(jumpCancelEnums))
+        if (jumpRequested && !cancelMovementEnums.HasAnyFlag(jumpCancelEnums)
+            && playerData.jumpData.jumpStruct.IsUnlocked)
         {
-            if(jumpStruct.HasCharges)
+            if(playerData.jumpData.jumpStruct.HasCharges)
                 JumpVoid();
             jumpRequested = false;
         }
@@ -68,9 +68,9 @@ public class Jump : MonoBehaviour
     void JumpVoid()
     {
         playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 0f);
-        playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        playerRb.AddForce(Vector2.up * playerData.jumpData.JumpForce, ForceMode2D.Impulse);
         jumpRequested = false;
-        jumpStruct.ConsumeCharge();
+        playerData.jumpData.jumpStruct.ConsumeCharge();
         if (DebugMode.DebugModeActive)
             Debug.Log("Player Jumped");
     }
@@ -78,8 +78,8 @@ public class Jump : MonoBehaviour
     void ResetJump()
     {
         if(groundCheck.isGrounded)
-            jumpStruct.ResetCharges();
+            playerData.jumpData.jumpStruct.ResetCharges();
     }
-    public void IncreaseJumpCharge(int amount = 1) => jumpStruct.IncreaseCharge(amount);
-    public void IncreaseJumpStrength(float amount = 1f) => jumpForce += amount;
+    public void IncreaseJumpCharge(int amount = 1) => playerData.jumpData.jumpStruct.IncreaseCharge(amount);
+    public void ModifyJumpForce(float amount = 1f) => playerData.jumpData.ModifyJumpForce(amount);
 }

@@ -9,6 +9,8 @@ public class PlayerData : MonoBehaviour
     public JumpData jumpData;
     public MovementData movementData;
 
+    [Header("Currency Struct")]
+    public CurrencyData currencyData;
     private void Awake()
     {
         bool hasData = LoadPlayerData();
@@ -20,6 +22,7 @@ public class PlayerData : MonoBehaviour
             gravityData.SetDefaults();
             jumpData.SetDefaults();
             movementData.SetDefaults();
+            currencyData.SetDefaults();
         }
     }
 

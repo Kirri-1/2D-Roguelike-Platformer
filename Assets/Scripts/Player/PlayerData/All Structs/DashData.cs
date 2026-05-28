@@ -3,7 +3,7 @@ using UnityEngine;
 [System.Serializable]
 public struct DashData
 {
-    MovementStruct dashStruct;
+    public MovementStruct dashStruct;
     [SerializeField]
     float dashSpeed;
     public float DashSpeed => dashSpeed;
@@ -11,7 +11,7 @@ public struct DashData
     float dashDuration;
     public float DashDuration => dashDuration;
 
-    public void IncreaseSpeed(float amount)
+    public void ModifySpeed(float amount)
     {
         dashSpeed += amount;
     }
@@ -21,7 +21,7 @@ public struct DashData
          dashStruct.IncreaseCharge(amount);
     }
 
-    public void IncreaseDuration(float amount)
+    public void ModifyDuration(float amount)
     {
         dashDuration += amount;
     }
@@ -30,7 +30,7 @@ public struct DashData
 
     public void SetDefaults()
     {
-         dashSpeed = 20f;
+         dashSpeed = 40f;
          dashDuration = 0.15f;
          dashStruct.SetDefaults(1);
     }

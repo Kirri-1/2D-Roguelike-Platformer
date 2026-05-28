@@ -1,26 +1,23 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-//TODO: Refactor to use MovementData struct from PlayerData
-
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Dash))]
 [RequireComponent(typeof(CancelMovementEnums))]
+[RequireComponent(typeof(PlayerData))]
 public class Movement : MonoBehaviour
 {
     PlayerMovement playerMovement;
     InputAction moveAction;
 
-    [SerializeField]
-    float moveSpeed = 5f;
-    public float MoveSpeed => moveSpeed;
+    PlayerData playerData;
 
     private Rigidbody2D playerRb;
     CancelMovementEnums cancelMovementEnums;
-    public CancelMovementEnums.CancelMovementType cancelMovementType = CancelMovementEnums.CancelMovementType.None;
 
     private void Awake()
     {
+        playerData = GetComponent<PlayerData>();
         playerMovement = new PlayerMovement();
         moveAction = playerMovement.Player.Movement;
         cancelMovementEnums = GetComponent<CancelMovementEnums>();
@@ -47,14 +44,16 @@ public class Movement : MonoBehaviour
 
     private void Move()
     {
-        if (cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
+        if (cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None
+            && !playerData.movementData.IsUnlocked)
             return;
 
         Vector2 moveInput = moveAction.ReadValue<Vector2>();
-        Vector2 moveVelocity = moveInput * moveSpeed;
+        Vector2 moveVelocity = moveInput * playerData.movementData.MovementSpeed;
 
         playerRb.linearVelocity = new Vector2(moveVelocity.x, playerRb.linearVelocity.y);
     }
 
-    public void IncreaseMovementSpeed(float amount) => moveSpeed += amount;
+    public void ModifyMovementSpeed(float amount) => playerData.movementData.ModifyMovementSpeed(amount);
+    public void SetMovementSpeed(float newSpeed) => playerData.movementData.SetMovementSpeed(newSpeed);
 }

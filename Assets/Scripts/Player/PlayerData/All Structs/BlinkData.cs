@@ -3,16 +3,18 @@ using UnityEngine;
 [System.Serializable]
 public struct BlinkData
 {
-    MovementStruct blinkStruct;
+    public MovementStruct blinkStruct;
     [SerializeField]
     float blinkDistance;
     public float BlinkDistance => blinkDistance;
     [SerializeField]
     float blinkDuration;
     public float BlinkDuration => blinkDuration;
+    [SerializeField]
+    float blinkDistanceCheck;
+    public float BlinkDistanceCheck => blinkDistanceCheck;
 
-
-    public void IncreaseDistance(float amount)
+    public void ModifyDistance(float amount)
     {
         blinkDistance += amount;
     }
@@ -27,6 +29,7 @@ public struct BlinkData
     {
         blinkDistance = 10f;
         blinkDuration = 0.3f;
+        blinkDistanceCheck = 5f;
         blinkStruct.SetDefaults(1);
     }
 }
