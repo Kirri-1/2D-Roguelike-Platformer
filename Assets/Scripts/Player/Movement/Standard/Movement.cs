@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+//TODO: Refactor to use MovementData struct from PlayerData
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Dash))]
 [RequireComponent(typeof(CancelMovementEnums))]
@@ -8,7 +10,11 @@ public class Movement : MonoBehaviour
 {
     PlayerMovement playerMovement;
     InputAction moveAction;
-    public float moveSpeed = 5f;
+
+    [SerializeField]
+    float moveSpeed = 5f;
+    public float MoveSpeed => moveSpeed;
+
     private Rigidbody2D playerRb;
     CancelMovementEnums cancelMovementEnums;
     public CancelMovementEnums.CancelMovementType cancelMovementType = CancelMovementEnums.CancelMovementType.None;
@@ -49,4 +55,6 @@ public class Movement : MonoBehaviour
 
         playerRb.linearVelocity = new Vector2(moveVelocity.x, playerRb.linearVelocity.y);
     }
+
+    public void IncreaseMovementSpeed(float amount) => moveSpeed += amount;
 }

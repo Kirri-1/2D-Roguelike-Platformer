@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+//TODO: Refactor to use DashData struct from PlayerData
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CancelMovementEnums))]
 public class Dash : MonoBehaviour
@@ -13,13 +15,15 @@ public class Dash : MonoBehaviour
     bool dashRequested = false;
     Rigidbody2D playerRb;
     GroundCheck groundCheck;
-
-
-    public float dashSpeed = 20f;
-    public float dashDuration = 0.5f;
-
+    [Header("Dash Settings")]
     [SerializeField]
-    private float maxSpeed = 40f; // Maximum speed to prevent excessive velocity
+    [Tooltip("The speed at which the player will dash.")]
+    float dashSpeed = 20f;
+    public float DashSpeed => dashSpeed;
+    [SerializeField]
+    [Tooltip("The duration of the dash action.")]
+    float dashDuration = 0.15f;
+    public float DashDuration => dashDuration;
 
     Coroutine dashCoroutine;
 
@@ -67,33 +71,6 @@ public class Dash : MonoBehaviour
     void DashVoid()
     {
         cancelMovementEnums.AddCancelMovementType(CancelMovementEnums.CancelMovementType.Dash);
-        Vector2 moveInput = moveAction.ReadValue<Vector2>();
-        bool isMoving = moveInput != Vector2.zero;
-
-        Vector2 dashDirection = moveInput.normalized;
-
-        playerRb.linearVelocity = Vector2.zero;
-        if (isMoving)
-        {
-            if (dashDirection.y < -0.5f)
-            {
-                if (DebugMode.DebugModeActive)
-                    Debug.Log("Stomping downwards!");
-                playerRb.AddForce(dashDirection * (dashSpeed * 1.5f), ForceMode2D.Impulse);
-            }
-            else
-            {
-                playerRb.AddForce(dashDirection * dashSpeed, ForceMode2D.Impulse);
-                if (DebugMode.DebugModeActive)
-                    Debug.Log($"Dashed in direction: {dashDirection}");
-            }
-        }
-        else
-        {
-            playerRb.AddForce(Vector2.right * dashSpeed, ForceMode2D.Impulse);
-            if (DebugMode.DebugModeActive)
-                Debug.Log("Dashed forward with no input direction!");
-        }
         if (dashCoroutine != null)
         {
             StopCoroutine(dashCoroutine);
@@ -112,7 +89,23 @@ public class Dash : MonoBehaviour
 
     public IEnumerator DashCoroutine()
     {
-        yield return new WaitForSeconds(dashDuration);
+        Vector2 dashDirection = moveAction.ReadValue<Vector2>();
+        if (dashDirection == Vector2.zero) dashDirection = Vector2.right;
+        dashDirection = dashDirection.normalized;
+
+        float elapsed = 0f;
+        while (elapsed < dashDuration)
+        {
+            playerRb.linearVelocity = dashDirection * dashSpeed;
+            elapsed += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        playerRb.linearVelocity = Vector2.zero;
         cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Dash);
     }
+
+    public void IncreaseDashCharge(int amount = 1) => dashStruct.IncreaseCharge(amount);
+    public void IncreaseDashDuration(float amount = 0.5f) => dashDuration += amount;
+    public void IncreaseDashSpeed(float amount = 1f) => dashSpeed += amount;
 }

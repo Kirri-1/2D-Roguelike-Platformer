@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+//TODO: Refactor to use BlinkData struct from PlayerData
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CancelMovementEnums))]
 [RequireComponent(typeof(CapsuleCollider2D))]
@@ -18,13 +20,19 @@ public class Blink : MonoBehaviour
     GroundCheck groundCheck;
 
     CancelMovementEnums cancelMovementEnums;
-
-    public float blinkDistance = 10f;
+    [Header("Blink Settings")]
     [SerializeField]
+    [Tooltip("The distance the player will blink when the blink action is triggered.")]
+    float blinkDistance = 10f;
+    public float BlinkDistance => blinkDistance;
+    [SerializeField]
+    [Tooltip("The duration of the blink action.")]
     float blinkDuration = 0.3f;
+    public float BlinkDuration => blinkDuration;
 
     Coroutine blinkCoroutine;
     [SerializeField]
+    [Tooltip("The layer mask used to ignore the player when performing the box cast for blinking.")]
     LayerMask ignorePlayer;
     private void Awake()
     {
@@ -48,13 +56,6 @@ public class Blink : MonoBehaviour
         blinkAction.Disable();
         moveAction.Disable();
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if(blinkAction.triggered)
@@ -137,4 +138,7 @@ public class Blink : MonoBehaviour
             return Vector2.right;
         return moveInput;
     }
+
+    public void IncreaseBlinkCount(int amount = 1) => blinkStruct.IncreaseCharge(amount);
+    public void IncreaseBlinkDistance(float amount = 1f) => blinkDistance += amount;
 }

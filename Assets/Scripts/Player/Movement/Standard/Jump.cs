@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static CancelMovementEnums;
+
+//TODO: Refactor to use JumpData struct from PlayerData
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(GroundCheck))]
@@ -13,7 +14,6 @@ public class Jump : MonoBehaviour
     CancelMovementEnums cancelMovementEnums;
     PlayerMovement playerMovement;
     InputAction jumpAction;
-    Coroutine jumpCoroutine;
 
     public float jumpForce = 10f;
     public MovementStruct jumpStruct;
@@ -61,6 +61,7 @@ public class Jump : MonoBehaviour
         {
             if(jumpStruct.HasCharges)
                 JumpVoid();
+            jumpRequested = false;
         }
     }
 
@@ -79,5 +80,6 @@ public class Jump : MonoBehaviour
         if(groundCheck.isGrounded)
             jumpStruct.ResetCharges();
     }
-    
+    public void IncreaseJumpCharge(int amount = 1) => jumpStruct.IncreaseCharge(amount);
+    public void IncreaseJumpStrength(float amount = 1f) => jumpForce += amount;
 }
