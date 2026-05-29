@@ -1,40 +1,50 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
-[System.Serializable]
-public struct MovementStruct
+namespace Player.Movement.Structs
 {
-    [SerializeField]
-    int maxCharges;
-    public int MaxCharges => maxCharges;
-    [SerializeField]
-    int currentCharge;
-    public int CurrentCharge => currentCharge;
-
-    public bool HasCharges => currentCharge > 0;
-
-    [SerializeField]
-    bool isUnlocked;
-    public bool IsUnlocked => isUnlocked;
-
-    public void ResetCharges() => currentCharge = maxCharges;
-    public void ConsumeCharge()
+    [System.Serializable]
+    public struct MovementStruct
     {
-        currentCharge = Mathf.Max(currentCharge - 1, 0);
-    }
+        [JsonProperty("MaxCharges")]
+        [SerializeField]
+        int maxCharges;
+        [JsonIgnore]
+        public int MaxCharges => maxCharges;
+        [JsonProperty("CurrentCharge")]
+        [SerializeField]
+        int currentCharge;
+        [JsonIgnore]
+        public int CurrentCharge => currentCharge;
 
-    public void IncreaseCharge(int amount = 1)
-    {
-        maxCharges += amount;
-        currentCharge = maxCharges;
-    }
+        public bool HasCharges => currentCharge > 0;
 
-    public void Unlock() => isUnlocked = true;
-    public void Lock() => isUnlocked = false;
+        [JsonProperty("IsUnlocked")]
+        [SerializeField]
+        bool isUnlocked;
+        [JsonIgnore]
+        public bool IsUnlocked => isUnlocked;
 
-    public void SetDefaults(int defaultCharges, bool unlock = false)
-    {
-        maxCharges = defaultCharges;
-        currentCharge = maxCharges;
-        isUnlocked = unlock;
+        public void ResetCharges() => currentCharge = maxCharges;
+        public void ConsumeCharge()
+        {
+            currentCharge = Mathf.Max(currentCharge - 1, 0);
+        }
+
+        public void IncreaseCharge(int amount = 1)
+        {
+            maxCharges += amount;
+            currentCharge = maxCharges;
+        }
+
+        public void Unlock() => isUnlocked = true;
+        public void Lock() => isUnlocked = false;
+
+        public void SetDefaults(int defaultCharges, bool unlock = false)
+        {
+            maxCharges = defaultCharges;
+            currentCharge = maxCharges;
+            isUnlocked = unlock;
+        }
     }
 }

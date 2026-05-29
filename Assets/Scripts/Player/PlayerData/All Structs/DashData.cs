@@ -1,37 +1,45 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
-[System.Serializable]
-public struct DashData
+namespace Player.Movement.Structs
 {
-    public MovementStruct dashStruct;
-    [SerializeField]
-    float dashSpeed;
-    public float DashSpeed => dashSpeed;
-    [SerializeField]
-    float dashDuration;
-    public float DashDuration => dashDuration;
-
-    public void ModifySpeed(float amount)
+    [System.Serializable]
+    public struct DashData
     {
-        dashSpeed += amount;
-    }
+        public MovementStruct dashStruct;
+        [JsonProperty("DashSpeed")]
+        [SerializeField]
+        float dashSpeed;
+        [JsonIgnore]
+        public float DashSpeed => dashSpeed;
+        [JsonProperty("DashDuration")]
+        [SerializeField]
+        float dashDuration;
+        [JsonIgnore]
+        public float DashDuration => dashDuration;
 
-    public void IncreaseCharge(int amount)
-    {
-         dashStruct.IncreaseCharge(amount);
-    }
+        public void ModifySpeed(float amount)
+        {
+            dashSpeed += amount;
+        }
 
-    public void ModifyDuration(float amount)
-    {
-        dashDuration += amount;
-    }
+        public void IncreaseCharge(int amount)
+        {
+            dashStruct.IncreaseCharge(amount);
+        }
 
-    public void Unlock() => dashStruct.Unlock();
+        public void ModifyDuration(float amount)
+        {
+            dashDuration += amount;
+        }
 
-    public void SetDefaults()
-    {
-         dashSpeed = 40f;
-         dashDuration = 0.15f;
-         dashStruct.SetDefaults(1);
+        public void Unlock() => dashStruct.Unlock();
+
+        public void SetDefaults()
+        {
+            dashSpeed = 40f;
+            dashDuration = 0.15f;
+            dashStruct.SetDefaults(1);
+        }
     }
 }

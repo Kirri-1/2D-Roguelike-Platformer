@@ -1,26 +1,33 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
-[System.Serializable]
-public struct JumpData
+namespace Player.Movement.Structs
 {
-    public MovementStruct jumpStruct;
-    [SerializeField]
-    float jumpForce;
-    public float JumpForce => jumpForce;
+    [System.Serializable]
+    public struct JumpData
+    {
+        public MovementStruct jumpStruct;
 
-    public void ModifyJumpForce(float amount)
-    {
-        jumpForce += amount;
-    }
-    public void IncreaseCharge(int amount)
-    {
-        jumpStruct.IncreaseCharge(amount);
-    }
-    public void Unlock() => jumpStruct.Unlock();
+        [JsonProperty("JumpForce")]
+        [SerializeField]
+        float jumpForce;
+        [JsonIgnore]
+        public float JumpForce => jumpForce;
 
-    public void SetDefaults()
-    {
-        jumpForce = 15f;
-        jumpStruct.SetDefaults(1, true);
+        public void ModifyJumpForce(float amount)
+        {
+            jumpForce += amount;
+        }
+        public void IncreaseCharge(int amount)
+        {
+            jumpStruct.IncreaseCharge(amount);
+        }
+        public void Unlock() => jumpStruct.Unlock();
+
+        public void SetDefaults()
+        {
+            jumpForce = 15f;
+            jumpStruct.SetDefaults(1, true);
+        }
     }
 }

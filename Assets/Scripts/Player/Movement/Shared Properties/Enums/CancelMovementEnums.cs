@@ -1,42 +1,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CancelMovementEnums : MonoBehaviour
+namespace Player.Movement.SharedProperties
 {
-    public enum CancelMovementType
+    public class CancelMovementEnums : MonoBehaviour
     {
-        None = 0,
-        Dash = 1 << 0,
-        Jump = 1 << 1,
-        Blink = 1 << 2,
-        Attack = 1 << 3,
-        Stun = 1 << 4,
-        Knockback = 1 << 5
-    }
-    public CancelMovementType cancelMovementType;
-
-    public void AddCancelMovementType(CancelMovementType type)
-    {
-        cancelMovementType |= type;
-    }
-
-    public void RemoveCancelMovementType(CancelMovementType type)
-    {
-        cancelMovementType &= ~type;
-    }
-
-    public void ResetCancelMovement()
-    {
-        cancelMovementType = CancelMovementType.None;
-    }
-
-    public bool HasAnyFlag(HashSet<CancelMovementType> flags)
-    {
-        foreach (var flag in flags)
+        public enum CancelMovementType
         {
-            if ((cancelMovementType & flag) != 0)
-                return true;
+            None = 0,
+            Dash = 1 << 0,
+            Jump = 1 << 1,
+            Blink = 1 << 2,
+            Attack = 1 << 3,
+            Stun = 1 << 4,
+            Knockback = 1 << 5,
+            Cutscene = 1 << 6,
         }
-        return false;
+        public CancelMovementType cancelMovementType;
+
+        public void AddCancelMovementType(CancelMovementType type)
+        {
+            cancelMovementType |= type;
+        }
+
+        public void RemoveCancelMovementType(CancelMovementType type)
+        {
+            cancelMovementType &= ~type;
+        }
+
+        public void ResetCancelMovement()
+        {
+            cancelMovementType = CancelMovementType.None;
+        }
+
+        public bool HasAnyFlag(HashSet<CancelMovementType> flags)
+        {
+            foreach (var flag in flags)
+            {
+                if ((cancelMovementType & flag) != 0)
+                    return true;
+            }
+            return false;
+        }
     }
 }

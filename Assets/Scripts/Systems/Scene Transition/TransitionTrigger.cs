@@ -2,32 +2,36 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(CircleCollider2D))]
-[RequireComponent(typeof(EntryWay))]
 public class TransitionTrigger : MonoBehaviour
 {
     CircleCollider2D _collider;
-    SceneTransitions _sceneTransitions;
-    EntryWay _entryWay;
+    [SerializeField]
+    Transform destination;
+    GameObject _camera;
+    [SerializeField]
+    Transform nextRoomCameraPosition;
     private void Awake()
     {
         _collider = GetComponent<CircleCollider2D>();
         _collider.isTrigger = true;
-
-        _sceneTransitions = SceneTransitions.Instance;
-        if (_sceneTransitions == null)
+        _camera = GameObject.FindGameObjectWithTag("MainCamera");
+        if(!_camera)
         {
-            Debug.LogError("SceneTransitions component not found in the scene. Please ensure there is a SceneTransitions component present.");
+            Debug.LogError("No camera found in the scene with the tag 'Camera'. Please assign the correct tag to your camera.");
         }
-
-         _entryWay = GetComponent<EntryWay>();
     }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Player"))
-        { 
-            _sceneTransitions.StartTransitionCoroutine(_entryWay.NewSceneReference, _entryWay.NewEntryWayName);
+        if (!collision.CompareTag("Player"))
+            return;
+
+        if (collision.TryGetComponent(out RespawnOwner respawnOwner))
+        {
+            respawnOwner.SetRespawnSwitch(true);
+            _camera.transform.position = nextRoomCameraPosition.position;
+            //camera transition
         }
     }
 }

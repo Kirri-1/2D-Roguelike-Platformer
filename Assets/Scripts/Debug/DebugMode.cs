@@ -1,9 +1,12 @@
-public class DebugMode
+namespace DebugN
 {
-    public static bool DebugModeActive =
+    public class DebugMode
+    {
+        public static bool DebugModeActive =
 #if UNITY_EDITOR
-        true;
+            true;
 #else
         false;
 #endif
+    }
 }

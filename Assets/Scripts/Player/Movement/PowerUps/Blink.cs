@@ -1,144 +1,195 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DebugN;
+using Player.Checks;
+using Player.Movement.SharedProperties;
+using Player.PowerUps.Blockers;
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(CancelMovementEnums))]
-[RequireComponent(typeof(CapsuleCollider2D))]
-[RequireComponent(typeof(PlayerData))]
-public class Blink : MonoBehaviour
+namespace Player.PowerUps
 {
-    Rigidbody2D playerRb;
-    CapsuleCollider2D playerCollider;
-    PlayerData playerData;
-
-    PlayerMovement playerMovement;
-    InputAction blinkAction;
-    InputAction moveAction;
-    bool blinkRequested = false;
-    GroundCheck groundCheck;
-
-    CancelMovementEnums cancelMovementEnums;
-    [Header("Blink Settings")]
-    [SerializeField]
-    [Tooltip("The distance the player will blink when the blink action is triggered.")]
-    float blinkDistance = 10f;
-    public float BlinkDistance => blinkDistance;
-    [SerializeField]
-    [Tooltip("The duration of the blink action.")]
-    float blinkDuration = 0.3f;
-    public float BlinkDuration => blinkDuration;
-
-    Coroutine blinkCoroutine;
-    [SerializeField]
-    [Tooltip("The layer mask used to ignore the player when performing the box cast for blinking.")]
-    LayerMask ignorePlayer;
-    private void Awake()
+    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(CancelMovementEnums))]
+    [RequireComponent(typeof(CapsuleCollider2D))]
+    [RequireComponent(typeof(PlayerData))]
+    public class Blink : MonoBehaviour
     {
-        playerData = GetComponent<PlayerData>();
-        playerCollider = GetComponent<CapsuleCollider2D>();
-        playerRb = GetComponent<Rigidbody2D>();
-        playerMovement = new PlayerMovement();
-        blinkAction = playerMovement.Player.Blink;
-        moveAction = playerMovement.Player.Movement;
-        cancelMovementEnums = GetComponent<CancelMovementEnums>();
-        groundCheck = GetComponent<GroundCheck>();
-        ignorePlayer = LayerMask.GetMask("Player");
-    }
+        Rigidbody2D playerRb;
+        CapsuleCollider2D playerCollider;
+        PlayerData playerData;
 
-    private void OnEnable()
-    {
-        blinkAction.Enable();
-        moveAction.Enable();
-    }
-    private void OnDisable()
-    {
-        blinkAction.Disable();
-        moveAction.Disable();
-    }
-    void Update()
-    {
-        if(blinkAction.triggered)
+        PlayerMovement playerMovement;
+        InputAction blinkAction;
+        InputAction moveAction;
+        bool blinkRequested = false;
+        GroundCheck groundCheck;
+
+        CancelMovementEnums cancelMovementEnums;
+        [Header("Blink Settings")]
+        [SerializeField]
+        [Tooltip("The distance the player will blink when the blink action is triggered.")]
+        float blinkDistance = 10f;
+        public float BlinkDistance => blinkDistance;
+        [SerializeField]
+        [Tooltip("The duration of the blink action.")]
+        float blinkDuration = 0.3f;
+        public float BlinkDuration => blinkDuration;
+
+        Coroutine blinkCoroutine;
+
+        private RaycastHit2D[] blinkHits = new RaycastHit2D[64];
+        private ContactFilter2D blinkFilter = ContactFilter2D.noFilter;
+
+        private void Awake()
         {
-            blinkRequested = true;
-            return;
+            playerData = GetComponent<PlayerData>();
+            playerCollider = GetComponent<CapsuleCollider2D>();
+            playerRb = GetComponent<Rigidbody2D>();
+            playerMovement = new PlayerMovement();
+            blinkAction = playerMovement.Player.Blink;
+            moveAction = playerMovement.Player.Movement;
+            cancelMovementEnums = GetComponent<CancelMovementEnums>();
+            groundCheck = GetComponent<GroundCheck>();
+            blinkFilter.useTriggers = true;
         }
-        ResetBlink();
-    }
 
-    private void FixedUpdate()
-    {
-        if(blinkRequested)
+        private void OnEnable()
         {
-            if(playerData.blinkData.blinkStruct.HasCharges && playerData.blinkData.blinkStruct.IsUnlocked)
-                BlinkVoid();
-            blinkRequested = false;
+            blinkAction.Enable();
+            moveAction.Enable();
         }
-    }
-
-    void BlinkVoid()
-    {
-        if (DebugMode.DebugModeActive)
-            Debug.Log("Blink attempted");
-
-        cancelMovementEnums.AddCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
-        playerRb.linearVelocity = Vector2.zero;
-        Vector2 moveInput = moveAction.ReadValue<Vector2>();
-
-        Vector2 newLocation;
-        Vector2 blinkDirection = GetBlinkDirection(moveInput);
-        Vector2 moveDirection = blinkDirection.normalized;
-
-        Vector2 castSize = new Vector2(playerCollider.bounds.size.x, playerCollider.bounds.size.y * 0.9f);
-        var hit = Physics2D.BoxCast(transform.position, castSize, 0, moveDirection, playerData.blinkData.BlinkDistance, ~ignorePlayer);
-        if (hit.collider == null)
+        private void OnDisable()
         {
-            newLocation = (Vector2)transform.position + blinkDirection * playerData.blinkData.BlinkDistance;
-            transform.position = newLocation;
+            blinkAction.Disable();
+            moveAction.Disable();
         }
-        else
+        void Update()
         {
-            newLocation = (Vector2)transform.position + blinkDirection * hit.distance;
-            if (hit.distance < playerData.blinkData.BlinkDistanceCheck)
+            if (blinkAction.triggered)
             {
-                cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
-                if (DebugMode.DebugModeActive)
-                    Debug.Log("Blink cancelled due to short distance");
+                blinkRequested = true;
                 return;
             }
-            transform.position = newLocation;
+            ResetBlink();
         }
-        if (DebugMode.DebugModeActive)
-            Debug.Log("Blinked in direction: " + moveDirection);
-        
-        if(blinkCoroutine != null)
+
+        private void FixedUpdate()
         {
-            StopCoroutine(blinkCoroutine);
+            if (blinkRequested)
+            {
+                if (playerData.blinkData.blinkStruct.HasCharges && playerData.blinkData.blinkStruct.IsUnlocked)
+                    BlinkVoid();
+                blinkRequested = false;
+            }
         }
-        blinkCoroutine = StartCoroutine(BlinkCoroutine());
-        playerData.blinkData.blinkStruct.ConsumeCharge();
-    }
 
-    void ResetBlink()
-    {
-        if (groundCheck.isGrounded)
+        void BlinkVoid()
         {
-            playerData.blinkData.blinkStruct.ResetCharges();
+            if (DebugMode.DebugModeActive)
+                Debug.Log("Blink attempted");
+
+            cancelMovementEnums.AddCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
+            Vector2 moveInput = moveAction.ReadValue<Vector2>();
+
+            Vector2 blinkDirection = GetBlinkDirection(moveInput);
+            Vector2 moveDirection = blinkDirection.normalized;
+
+            Vector2 castSize = new Vector2(playerCollider.bounds.size.x, playerCollider.bounds.size.y * 0.9f);
+            float castDistance = playerData.blinkData.BlinkDistance;
+
+            int hitCount = Physics2D.BoxCast(transform.position, castSize, 0f, moveDirection, blinkFilter, blinkHits, castDistance);
+
+            RaycastHit2D closestBlocker = new RaycastHit2D();
+            bool foundBlocker = false;
+            bool foundHardBlocker = false;
+            float shortestDistance = float.MaxValue;
+
+            for (int i = 0; i < hitCount; i++)
+            {
+                if (blinkHits[i].collider == playerCollider) continue;
+
+                if (blinkHits[i].collider.TryGetComponent(out BlinkBlocker blinkBlocker))
+                {
+                    if (blinkBlocker.CompletelyBlock)
+                    {
+                        if(blinkHits[i].distance < shortestDistance)
+                        {
+                            shortestDistance = blinkHits[i].distance;
+                            closestBlocker = blinkHits[i];
+                            foundBlocker = false;
+                            foundHardBlocker = true;
+                        }
+                        if (DebugMode.DebugModeActive)
+                            Debug.Log("Hard BlinkBlocker hit", blinkHits[i].collider.gameObject);
+                        continue;
+                    }
+
+                    if (blinkHits[i].distance < shortestDistance)
+                    {
+                        shortestDistance = blinkHits[i].distance;
+                        closestBlocker = blinkHits[i];
+                        foundBlocker = true;
+                    }
+                }
+            }
+            if (!foundBlocker && foundHardBlocker)
+            {
+                cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
+                return;
+            }
+
+            Vector2 newLocation;
+            if (foundBlocker)
+            {
+                newLocation = (Vector2)transform.position + moveDirection * shortestDistance;
+                if (shortestDistance < playerData.blinkData.BlinkDistanceCheck)
+                {
+                    cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
+                    if (DebugMode.DebugModeActive)
+                        Debug.Log("Blink cancelled due to short distance");
+                    return;
+                }
+                transform.position = newLocation;
+            }
+            else
+            {
+                newLocation = (Vector2)transform.position + moveDirection * castDistance;
+                transform.position = newLocation;
+            }
+            playerRb.linearVelocity = Vector2.zero;
+
+            if (DebugMode.DebugModeActive)
+                Debug.Log("Blinked in direction: " + moveDirection);
+
+            if (blinkCoroutine != null)
+            {
+                StopCoroutine(blinkCoroutine);
+            }
+            blinkCoroutine = StartCoroutine(BlinkCoroutine());
+            playerData.blinkData.blinkStruct.ConsumeCharge();
         }
-    }
 
-    IEnumerator BlinkCoroutine()
-    {
-        yield return new WaitForSeconds(blinkDuration);
-        cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
-    }
-    Vector2 GetBlinkDirection(Vector2 moveInput)
-    {
-        if (moveInput == Vector2.zero)
-            return Vector2.right;
-        return moveInput;
-    }
+        void ResetBlink()
+        {
+            if (groundCheck.isGrounded)
+            {
+                playerData.blinkData.blinkStruct.ResetCharges();
+            }
+        }
 
-    public void IncreaseBlinkCount(int amount = 1) => playerData.blinkData.blinkStruct.IncreaseCharge(amount);
-    public void ModifyBlinkDistance(float amount = 1f) => playerData.blinkData.ModifyDistance(amount);
+        IEnumerator BlinkCoroutine()
+        {
+            yield return new WaitForSeconds(blinkDuration);
+            cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
+        }
+        Vector2 GetBlinkDirection(Vector2 moveInput)
+        {
+            if (moveInput == Vector2.zero)
+                return Vector2.right;
+            return moveInput;
+        }
+
+        public void IncreaseBlinkCount(int amount = 1) => playerData.blinkData.blinkStruct.IncreaseCharge(amount);
+        public void ModifyBlinkDistance(float amount = 1f) => playerData.blinkData.ModifyDistance(amount);
+    }
 }

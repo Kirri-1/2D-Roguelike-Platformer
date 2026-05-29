@@ -1,62 +1,71 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
-[System.Serializable]
-public struct CurrencyData
+namespace Player.Currency.Structs
 {
-    [SerializeField]
-    int currencyAmount;
-    public int CurrencyAmount => currencyAmount;
-    [SerializeField]
-    int allowedDebtAmount;
-    public int AllowedDebtAmount => allowedDebtAmount;
-
-    public void SetDefaults()
+    [System.Serializable]
+    public struct CurrencyData
     {
-        currencyAmount = 0;
-        allowedDebtAmount = 0;
-    }
+        [SerializeField]
+        [JsonProperty("CurrencyAmount")]
+        int currencyAmount;
+        [JsonIgnore]
+        public int CurrencyAmount => currencyAmount;
 
-    public void AddCurrency(int amount)
-    {
-        if(amount < 0)
+        [JsonProperty("AllowedDebtAmount")]
+        [SerializeField]
+        int allowedDebtAmount;
+        [JsonIgnore]
+        public int AllowedDebtAmount => allowedDebtAmount;
+
+        public void SetDefaults()
         {
-            Debug.LogError("Cannot add a negative amount of currency.");
-            return;
+            currencyAmount = 0;
+            allowedDebtAmount = 0;
         }
-        currencyAmount += amount;
-    }
 
-    public void SubtractCurrency(int amount)
-    {
-        if(amount < 0)
+        public void AddCurrency(int amount)
         {
-            Debug.LogError("Cannot subtract a negative amount of currency.");
-            return;
+            if (amount < 0)
+            {
+                Debug.LogError("Cannot add a negative amount of currency.");
+                return;
+            }
+            currencyAmount += amount;
         }
-        currencyAmount = Mathf.Max(currencyAmount - amount, -allowedDebtAmount);
-    }
 
-    public void AddAllowedDebt(int amount)
-    {
-        if(amount < 0)
+        public void SubtractCurrency(int amount)
         {
-            Debug.LogError("Cannot add a negative amount of allowed debt.");
-            return;
+            if (amount < 0)
+            {
+                Debug.LogError("Cannot subtract a negative amount of currency.");
+                return;
+            }
+            currencyAmount = Mathf.Max(currencyAmount - amount, -allowedDebtAmount);
         }
-        allowedDebtAmount += amount;
-    }
-    public void SubtractAllowedDebt(int amount)
-    {
-        if(amount < 0)
-        {
-            Debug.LogError("Cannot subtract a negative amount of allowed debt.");
-            return;
-        }
-        allowedDebtAmount = Mathf.Max(allowedDebtAmount - amount, 0);
-    }
 
-    public void ResetCurrency()
-    {
-        currencyAmount = 0;
+        public void AddAllowedDebt(int amount)
+        {
+            if (amount < 0)
+            {
+                Debug.LogError("Cannot add a negative amount of allowed debt.");
+                return;
+            }
+            allowedDebtAmount += amount;
+        }
+        public void SubtractAllowedDebt(int amount)
+        {
+            if (amount < 0)
+            {
+                Debug.LogError("Cannot subtract a negative amount of allowed debt.");
+                return;
+            }
+            allowedDebtAmount = Mathf.Max(allowedDebtAmount - amount, 0);
+        }
+
+        public void ResetCurrency()
+        {
+            currencyAmount = 0;
+        }
     }
 }

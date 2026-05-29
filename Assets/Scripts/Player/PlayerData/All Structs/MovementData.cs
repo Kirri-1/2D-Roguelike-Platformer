@@ -1,14 +1,19 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
 public struct MovementData
 {
+    [JsonProperty("MovementSpeed")]
     [SerializeField]
     float movementSpeed;
+    [JsonIgnore]
     public float MovementSpeed => movementSpeed;
 
+    [JsonProperty("IsUnlocked")]
     [SerializeField]
     bool isUnlocked;
+    [JsonIgnore]
     public bool IsUnlocked => isUnlocked;
 
     public void ModifyMovementSpeed(float amount)

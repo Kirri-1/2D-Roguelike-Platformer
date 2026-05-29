@@ -1,36 +1,48 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
-[System.Serializable]
-public struct GravityData
+namespace Player.Movement.Structs
 {
-    public MovementStruct gravityStruct;
-    [SerializeField]
-    float gravityScale;
-    public float GravityScale => gravityScale;
-
-    [SerializeField]
-    float defaultGravityScale;
-    public float DefaultGravityScale => defaultGravityScale;
-
-    public float ModifyGravityScale(float amount)
+    [System.Serializable]
+    public struct GravityData
     {
-        gravityScale += amount;
-        return gravityScale;
-    }
-    public float SetGravity(float newGravityScale)
-    {
-        gravityScale = newGravityScale;
-        return gravityScale;
-    }
-    [SerializeField]
-    bool isUnlocked;
-    public bool IsUnlocked => isUnlocked;
+        public MovementStruct gravityStruct;
 
-    public void Unlock() => isUnlocked = true;
+        [JsonProperty("GravityScale")]
+        [SerializeField]
+        float gravityScale;
+        [JsonIgnore]
+        public float GravityScale => gravityScale;
 
-    public void SetDefaults()
-    {
-        defaultGravityScale = 3f;
-        gravityScale = defaultGravityScale;
+        [JsonProperty("DefaultGravityScale")]
+        [SerializeField]
+        float defaultGravityScale;
+        [JsonIgnore]
+        public float DefaultGravityScale => defaultGravityScale;
+
+        public float ModifyGravityScale(float amount)
+        {
+            gravityScale += amount;
+            return gravityScale;
+        }
+        public float SetGravity(float newGravityScale)
+        {
+            gravityScale = newGravityScale;
+            return gravityScale;
+        }
+
+        [JsonProperty("IsUnlocked")]
+        [SerializeField]
+        bool isUnlocked;
+        [JsonIgnore]
+        public bool IsUnlocked => isUnlocked;
+
+        public void Unlock() => isUnlocked = true;
+
+        public void SetDefaults()
+        {
+            defaultGravityScale = 3f;
+            gravityScale = defaultGravityScale;
+        }
     }
 }
