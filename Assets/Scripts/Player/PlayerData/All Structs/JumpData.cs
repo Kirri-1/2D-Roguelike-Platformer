@@ -36,5 +36,7 @@ namespace Player.Movement.Structs
         {
             return jumpForce + jumpForceBuff.TotalBuffs();
         }
+        public int MaxCharges() => jumpStruct.MaxCharges;
+        public int CurrentCharge() => jumpStruct.CurrentCharge;
     }
 }

@@ -45,7 +45,7 @@ namespace Player.Movement.Standard
 
         private void Move()
         {
-            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.movementData;
+            var levelData = LevelRulesScript.Instance.MovementStruct().movementData;
             float levelSpeed = Mathf.Min(playerData.movementData.TotalSpeed(), levelData.MovementSpeed);
 
             Vector2 moveInput = moveAction.ReadValue<Vector2>();

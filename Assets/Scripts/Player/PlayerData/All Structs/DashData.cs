@@ -54,5 +54,8 @@ namespace Player.Movement.Structs
         {
             return dashDuration + dashDurationBuff.TotalBuffs();
         }
+
+        public int MaxCharges() => dashStruct.MaxCharges;
+        public int CurrentCharge() => dashStruct.CurrentCharge;
     }
 }

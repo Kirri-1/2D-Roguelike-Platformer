@@ -78,7 +78,7 @@ namespace Player.PowerUps
         {
             if (!blinkRequested)
                 return;
-            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.blinkData.blinkStruct;
+            var levelData = LevelRulesScript.Instance.MovementStruct().blinkData.blinkStruct;
             if (!playerData.blinkData.blinkStruct.CanUseAbility(levelData.MaxCharges))
             {
                 blinkRequested = false;
@@ -96,7 +96,7 @@ namespace Player.PowerUps
 
         float SetBlinkDistance()
         {
-            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.blinkData;
+            var levelData = LevelRulesScript.Instance.MovementStruct().blinkData;
             return Mathf.Min(playerData.blinkData.TotalDistance(), levelData.BlinkDistance);
         }
 

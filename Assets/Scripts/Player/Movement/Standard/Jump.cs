@@ -65,8 +65,8 @@ namespace Player.Movement.Standard
         {
             if (!jumpRequested)
                 return;
-            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.jumpData;
-            if (!playerData.jumpData.jumpStruct.CanUseAbility(levelData.jumpStruct.MaxCharges))
+            var levelData = LevelRulesScript.Instance.MovementStruct().jumpData;
+            if (!playerData.jumpData.jumpStruct.CanUseAbility(levelData.MaxCharges()))
             {
                 jumpRequested = false;
                 return;

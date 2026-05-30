@@ -72,8 +72,7 @@ namespace Player.Movement.DashN
             if (!dashRequested)
                 return;
 
-            var levelData = LevelRulesScript.Instance.LevelRules.LevelData;
-            if (!playerData.dashData.dashStruct.CanUseAbility(levelData.modifyMovementStruct.dashData.dashStruct.MaxCharges))
+            if (!playerData.dashData.dashStruct.CanUseAbility(LevelRulesScript.Instance.MovementStruct().dashData.MaxCharges()))
             {
                 dashRequested = false;
                 return;
@@ -95,7 +94,7 @@ namespace Player.Movement.DashN
             {
                 StopCoroutine(dashCoroutine);
             }
-            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.dashData;
+            var levelData = LevelRulesScript.Instance.MovementStruct().dashData;
             float dashSpeed = Mathf.Min(playerData.dashData.TotalSpeed(), levelData.DashSpeed);
             float dashDuration = Mathf.Min(playerData.dashData.TotalDuration(), levelData.DashDuration);
             dashCoroutine = StartCoroutine(DashCoroutine(dashSpeed, dashDuration));

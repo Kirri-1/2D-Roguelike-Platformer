@@ -13,5 +13,11 @@ namespace Level.Rules
             base.Awake();
             _levelRules = Instantiate(_levelRules);
         }
+
+        public ModifyMovementStruct MovementStruct() => _levelRules.LevelData.modifyMovementStruct;
+
+        public LevelRulesData.AllowedFeatures AllowedFeatures() => _levelRules.LevelData.allowedFeatures;
+
+        public LevelRulesData.LevelModeType LevelModeType() => _levelRules.LevelData.levelMode;
     }
 }

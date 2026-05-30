@@ -54,4 +54,6 @@ public struct BlinkData
     {
         return blinkDistance + blinkDistanceBuff.TotalBuffs();
     }
+    public int MaxCharges() => blinkStruct.MaxCharges;
+    public int CurrentCharge() => blinkStruct.CurrentCharge;
 }
