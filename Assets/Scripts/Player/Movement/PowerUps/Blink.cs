@@ -26,16 +26,6 @@ namespace Player.PowerUps
         GroundCheck groundCheck;
 
         CancelMovementEnums cancelMovementEnums;
-        [Header("Blink Settings")]
-        [SerializeField]
-        [Tooltip("The distance the player will blink when the blink action is triggered.")]
-        float blinkDistance = 10f;
-        public float BlinkDistance => blinkDistance;
-        [SerializeField]
-        [Tooltip("The duration of the blink action.")]
-        float blinkDuration = 0.3f;
-        public float BlinkDuration => blinkDuration;
-
         Coroutine blinkCoroutine;
 
         private RaycastHit2D[] blinkHits = new RaycastHit2D[64];
@@ -196,7 +186,7 @@ namespace Player.PowerUps
 
         IEnumerator BlinkCoroutine()
         {
-            yield return new WaitForSeconds(blinkDuration);
+            yield return new WaitForSeconds(playerData.blinkData.BlinkDuration);
             cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
         }
         Vector2 GetBlinkDirection(Vector2 moveInput)
