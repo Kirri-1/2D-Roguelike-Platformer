@@ -1,7 +1,7 @@
 using UnityEngine;
 using DebugN;
 
-public class RespawnOwner : Singleton<RespawnOwner>
+public class RespawnOwner : MonoBehaviour
 {
     [SerializeField]
     Transform respawnerTransform;
@@ -14,9 +14,8 @@ public class RespawnOwner : Singleton<RespawnOwner>
 
     public Transform RespawnerTransform => respawnerTransform;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         if (respawnerTransform != null)
             transform.position = respawnerTransform.position;
     }

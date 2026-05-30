@@ -16,6 +16,8 @@ public struct MovementData
     [JsonIgnore]
     public bool IsUnlocked => isUnlocked;
 
+    public StatBuffs movementSpeedBuff;
+
     public void ModifyMovementSpeed(float amount)
     {
           movementSpeed += amount;
@@ -33,5 +35,10 @@ public struct MovementData
     {
         movementSpeed = 10f;
         isUnlocked = true;
+    }
+
+    public float TotalSpeed()
+    {
+        return movementSpeed + movementSpeedBuff.TotalBuffs();
     }
 }

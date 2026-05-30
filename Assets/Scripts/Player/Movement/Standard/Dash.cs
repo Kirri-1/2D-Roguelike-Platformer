@@ -1,8 +1,9 @@
+using Level.Rules;
+using Player.Checks;
+using Player.Movement.SharedProperties;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Player.Checks;
-using Player.Movement.SharedProperties;
 
 namespace Player.Movement.DashN
 {
@@ -68,12 +69,23 @@ namespace Player.Movement.DashN
         }
         private void FixedUpdate()
         {
-            if (dashRequested && cancelMovementEnums.cancelMovementType == CancelMovementEnums.CancelMovementType.None)
+            if (!dashRequested)
+                return;
+
+            var levelData = LevelRulesScript.Instance.LevelRules.LevelData;
+            if (!playerData.dashData.dashStruct.CanUseAbility(levelData.modifyMovementStruct.dashData.dashStruct.MaxCharges))
             {
-                if (playerData.dashData.dashStruct.HasCharges && playerData.dashData.dashStruct.IsUnlocked)
-                    DashVoid();
                 dashRequested = false;
+                return;
             }
+
+            if (cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
+            {
+                dashRequested = false;
+                return;
+            }
+            DashVoid();
+            dashRequested = false;
         }
 
         void DashVoid()
@@ -83,7 +95,10 @@ namespace Player.Movement.DashN
             {
                 StopCoroutine(dashCoroutine);
             }
-            dashCoroutine = StartCoroutine(DashCoroutine());
+            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.dashData;
+            float dashSpeed = Mathf.Min(playerData.dashData.TotalSpeed(), levelData.DashSpeed);
+            float dashDuration = Mathf.Min(playerData.dashData.TotalDuration(), levelData.DashDuration);
+            dashCoroutine = StartCoroutine(DashCoroutine(dashSpeed, dashDuration));
             playerData.dashData.dashStruct.ConsumeCharge();
         }
 
@@ -95,16 +110,16 @@ namespace Player.Movement.DashN
             }
         }
 
-        public IEnumerator DashCoroutine()
+        public IEnumerator DashCoroutine(float dashSpeed, float dashDuration)
         {
             Vector2 dashDirection = moveAction.ReadValue<Vector2>();
             if (dashDirection == Vector2.zero) dashDirection = Vector2.right;
             dashDirection = dashDirection.normalized;
 
             float elapsed = 0f;
-            while (elapsed < playerData.dashData.DashDuration)
+            while (elapsed < dashDuration)
             {
-                playerRb.linearVelocity = dashDirection * playerData.dashData.DashSpeed;
+                playerRb.linearVelocity = dashDirection * dashSpeed;
                 elapsed += Time.fixedDeltaTime;
                 yield return new WaitForFixedUpdate();
             }

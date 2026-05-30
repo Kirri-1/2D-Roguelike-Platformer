@@ -5,6 +5,7 @@ namespace Player.Movement.SharedProperties
 {
     public class CancelMovementEnums : MonoBehaviour
     {
+        [System.Flags]
         public enum CancelMovementType
         {
             None = 0,

@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Player.Movement.SharedProperties;
 using UnityEngine;
 
 namespace Player.Movement.Structs
@@ -17,7 +18,7 @@ namespace Player.Movement.Structs
         [JsonIgnore]
         public int CurrentCharge => currentCharge;
 
-        public bool HasCharges => currentCharge > 0;
+        public bool HasCharges => currentCharge < maxCharges;
 
         [JsonProperty("IsUnlocked")]
         [SerializeField]
@@ -25,16 +26,15 @@ namespace Player.Movement.Structs
         [JsonIgnore]
         public bool IsUnlocked => isUnlocked;
 
-        public void ResetCharges() => currentCharge = maxCharges;
+        public void ResetCharges() => currentCharge = 0;
         public void ConsumeCharge()
         {
-            currentCharge = Mathf.Max(currentCharge - 1, 0);
+            currentCharge = Mathf.Min(currentCharge + 1, maxCharges);
         }
 
         public void IncreaseCharge(int amount = 1)
         {
             maxCharges += amount;
-            currentCharge = maxCharges;
         }
 
         public void Unlock() => isUnlocked = true;
@@ -43,8 +43,16 @@ namespace Player.Movement.Structs
         public void SetDefaults(int defaultCharges, bool unlock = false)
         {
             maxCharges = defaultCharges;
-            currentCharge = maxCharges;
+            currentCharge = 0;
             isUnlocked = unlock;
+        }
+
+        public bool CanUseAbility(int levelMaxCharges)
+        {
+            if (!isUnlocked) return false;
+            int maxAllowed = Mathf.Min(levelMaxCharges, maxCharges);
+            if (currentCharge >= maxAllowed) return false;
+            return true;
         }
     }
 }

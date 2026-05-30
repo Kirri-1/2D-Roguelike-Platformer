@@ -1,12 +1,11 @@
+using Level.Rules;
+using Player.Movement.SharedProperties;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Player.Movement.DashN;
-using Player.Movement.SharedProperties;
 
 namespace Player.Movement.Standard
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(Dash))]
     [RequireComponent(typeof(CancelMovementEnums))]
     [RequireComponent(typeof(PlayerData))]
     public class Movement : MonoBehaviour
@@ -25,6 +24,7 @@ namespace Player.Movement.Standard
             playerMovement = new PlayerMovement();
             moveAction = playerMovement.Player.Movement;
             cancelMovementEnums = GetComponent<CancelMovementEnums>();
+            playerRb = GetComponent<Rigidbody2D>();
         }
         private void OnEnable()
         {
@@ -34,25 +34,22 @@ namespace Player.Movement.Standard
         {
             moveAction.Disable();
         }
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
-        {
-            playerRb = GetComponent<Rigidbody2D>();
-        }
 
         private void FixedUpdate()
         {
+            if (cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
+                return;
             Move();
         }
 
 
         private void Move()
         {
-            if (cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
-                return;
+            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.movementData;
+            float levelSpeed = Mathf.Min(playerData.movementData.TotalSpeed(), levelData.MovementSpeed);
 
             Vector2 moveInput = moveAction.ReadValue<Vector2>();
-            Vector2 moveVelocity = moveInput * playerData.movementData.MovementSpeed;
+            Vector2 moveVelocity = moveInput * levelSpeed;
 
             playerRb.linearVelocity = new Vector2(moveVelocity.x, playerRb.linearVelocity.y);
         }

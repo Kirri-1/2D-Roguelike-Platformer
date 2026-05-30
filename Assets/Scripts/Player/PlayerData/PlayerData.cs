@@ -18,6 +18,8 @@ public class PlayerData : MonoBehaviour
     [Header("Currency Struct")]
     public CurrencyData currencyData;
 
+    [SerializeField]
+    bool doSaveBool = true;
     private void Awake()
     {
         bool hasData = LoadPlayerData();
@@ -35,6 +37,8 @@ public class PlayerData : MonoBehaviour
                 Debug.Log("Player data initialized and saved successfully.");
             }
         }
+        if (doSaveBool)
+            SavePlayerData();
     }
 
     public bool SavePlayerData()

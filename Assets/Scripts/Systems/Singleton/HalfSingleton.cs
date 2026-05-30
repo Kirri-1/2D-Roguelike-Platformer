@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Singleton.SingletonN
+namespace Singleton.HalfSingleton
 {
-    public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+    public abstract class HalfSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         private static T _instance;
 
@@ -23,12 +23,15 @@ namespace Singleton.SingletonN
             if (_instance == null)
             {
                 _instance = this as T;
-                DontDestroyOnLoad(gameObject);
             }
             else if (_instance != this)
             {
                 Destroy(gameObject);
             }
+        }
+        private void OnDestroy()
+        {
+            _instance = null;
         }
     }
 }

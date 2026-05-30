@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using Player.Checks;
 using DebugN;
 using Player.Movement.SharedProperties;
+using Level.Rules;
 
 namespace Player.Movement.Standard
 {
@@ -23,11 +24,12 @@ namespace Player.Movement.Standard
 
         public bool jumpRequested = false;
 
-        HashSet<CancelMovementEnums.CancelMovementType> jumpCancelEnums = new HashSet<CancelMovementEnums.CancelMovementType>()
-    {
-        CancelMovementEnums.CancelMovementType.Attack,
-        CancelMovementEnums.CancelMovementType.Stun
-    };
+    //    HashSet<CancelMovementEnums.CancelMovementType> jumpCancelEnums = new HashSet<CancelMovementEnums.CancelMovementType>()
+    //{
+    //    CancelMovementEnums.CancelMovementType.Attack,
+    //    CancelMovementEnums.CancelMovementType.Stun
+    //};
+    //         ^ potential future stuff? Keeping it just in case
 
         private void Awake()
         {
@@ -50,7 +52,7 @@ namespace Player.Movement.Standard
 
         void Update()
         {
-            if (jumpAction.triggered)
+            if (jumpAction.triggered && !jumpRequested)
             {
                 jumpRequested = true;
                 return;
@@ -61,19 +63,29 @@ namespace Player.Movement.Standard
 
         private void FixedUpdate()
         {
-            if (jumpRequested && !cancelMovementEnums.HasAnyFlag(jumpCancelEnums)
-                && playerData.jumpData.jumpStruct.IsUnlocked)
+            if (!jumpRequested)
+                return;
+            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.jumpData;
+            if (!playerData.jumpData.jumpStruct.CanUseAbility(levelData.jumpStruct.MaxCharges))
             {
-                if (playerData.jumpData.jumpStruct.HasCharges)
-                    JumpVoid();
                 jumpRequested = false;
+                return;
             }
+            if(cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
+            {
+                jumpRequested = false;
+                return;
+            }
+            float jumpForce = Mathf.Min(playerData.jumpData.TotalJumpForce(), levelData.JumpForce);
+            JumpVoid(jumpForce);
+            jumpRequested = false;
         }
 
-        void JumpVoid()
+
+        void JumpVoid(float jumpForce)
         {
             playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 0f);
-            playerRb.AddForce(Vector2.up * playerData.jumpData.JumpForce, ForceMode2D.Impulse);
+            playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpRequested = false;
             playerData.jumpData.jumpStruct.ConsumeCharge();
             if (DebugMode.DebugModeActive)

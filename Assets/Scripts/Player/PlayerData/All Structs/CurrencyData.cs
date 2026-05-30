@@ -18,6 +18,8 @@ namespace Player.Currency.Structs
         [JsonIgnore]
         public int AllowedDebtAmount => allowedDebtAmount;
 
+        public StatBuffs currencyMultiplier; //figure out what to do for this
+
         public void SetDefaults()
         {
             currencyAmount = 0;

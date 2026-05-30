@@ -1,41 +1,46 @@
 using System.Collections.Generic;
 using UnityEditor.EditorTools;
 using UnityEngine;
+using RoomN.RoomBoundary;
+using RoomN.Manager;
 
-public class Room : MonoBehaviour
+namespace RoomN.RoomInfo
 {
-    [Header("Settings")]
-    [SerializeField] private List<Transform> spawnPoints = new();
-    [SerializeField] private Transform cameraPosition;
-    [SerializeField] private Vector2 spawnOffset;
-
-    
-    [SerializeField] private string roomName;
-    [SerializeField] private AudioClip roomMusic;
-
-    
-    public List<Transform> SpawnPoints => spawnPoints;
-    public Transform CameraPosition => cameraPosition;
-    public Vector2 SpawnOffset => spawnOffset;
-    public string RoomName => roomName;
-    public AudioClip RoomMusic => roomMusic;
-
-    
-    public bool IsActive => RoomManager.Instance?.CurrentActiveRoom == this;
-
-    private void OnDrawGizmos()
+    public class Room : MonoBehaviour
     {
-        // Visual aids for the editor
-        Gizmos.color = Color.green;
-        foreach (var point in spawnPoints)
-        {
-            if (point != null) Gizmos.DrawSphere(point.position, 0.3f);
-        }
+        [Header("Settings")]
+        [SerializeField] private List<Transform> spawnPoints = new();
+        [SerializeField] private Transform cameraPosition;
+        [SerializeField] private Vector2 spawnOffset;
 
-        if (cameraPosition != null)
+
+        [SerializeField] private string roomName;
+        [SerializeField] private AudioClip roomMusic;
+
+
+        public List<Transform> SpawnPoints => spawnPoints;
+        public Transform CameraPosition => cameraPosition;
+        public Vector2 SpawnOffset => spawnOffset;
+        public string RoomName => roomName;
+        public AudioClip RoomMusic => roomMusic;
+
+
+        public bool IsActive => RoomManager.Instance?.CurrentActiveRoom == this;
+
+        private void OnDrawGizmos()
         {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireCube(cameraPosition.position, new Vector3(2, 2, 0));
+            // Visual aids for the editor
+            Gizmos.color = Color.green;
+            foreach (var point in spawnPoints)
+            {
+                if (point != null) Gizmos.DrawSphere(point.position, 0.3f);
+            }
+
+            if (cameraPosition != null)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawWireCube(cameraPosition.position, new Vector3(2, 2, 0));
+            }
         }
     }
 }

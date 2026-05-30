@@ -14,6 +14,8 @@ namespace Player.Movement.Structs
         [JsonIgnore]
         public float JumpForce => jumpForce;
 
+        public StatBuffs jumpForceBuff;
+
         public void ModifyJumpForce(float amount)
         {
             jumpForce += amount;
@@ -28,6 +30,11 @@ namespace Player.Movement.Structs
         {
             jumpForce = 15f;
             jumpStruct.SetDefaults(1, true);
+        }
+
+        public float TotalJumpForce()
+        {
+            return jumpForce + jumpForceBuff.TotalBuffs();
         }
     }
 }

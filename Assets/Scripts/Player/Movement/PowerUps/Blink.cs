@@ -5,6 +5,7 @@ using DebugN;
 using Player.Checks;
 using Player.Movement.SharedProperties;
 using Player.PowerUps.Blockers;
+using Level.Rules;
 
 namespace Player.PowerUps
 {
@@ -75,15 +76,31 @@ namespace Player.PowerUps
 
         private void FixedUpdate()
         {
-            if (blinkRequested)
+            if (!blinkRequested)
+                return;
+            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.blinkData.blinkStruct;
+            if (!playerData.blinkData.blinkStruct.CanUseAbility(levelData.MaxCharges))
             {
-                if (playerData.blinkData.blinkStruct.HasCharges && playerData.blinkData.blinkStruct.IsUnlocked)
-                    BlinkVoid();
                 blinkRequested = false;
+                return;
             }
+            if(cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
+            {
+                blinkRequested = false;
+                return;
+            }
+
+            BlinkVoid(SetBlinkDistance());
+            blinkRequested = false;
         }
 
-        void BlinkVoid()
+        float SetBlinkDistance()
+        {
+            var levelData = LevelRulesScript.Instance.LevelRules.LevelData.modifyMovementStruct.blinkData;
+            return Mathf.Min(playerData.blinkData.TotalDistance(), levelData.BlinkDistance);
+        }
+
+        void BlinkVoid(float blinkDistance)
         {
             if (DebugMode.DebugModeActive)
                 Debug.Log("Blink attempted");
@@ -95,7 +112,7 @@ namespace Player.PowerUps
             Vector2 moveDirection = blinkDirection.normalized;
 
             Vector2 castSize = new Vector2(playerCollider.bounds.size.x, playerCollider.bounds.size.y * 0.9f);
-            float castDistance = playerData.blinkData.BlinkDistance;
+            float castDistance = blinkDistance;
 
             int hitCount = Physics2D.BoxCast(transform.position, castSize, 0f, moveDirection, blinkFilter, blinkHits, castDistance);
 

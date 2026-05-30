@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b8d838cf4d7b34e8c40b075587ea32, type: 3}
+  m_Name: Level 1 Challenge
+  m_EditorClassIdentifier: Assembly-CSharp::Level.Rules.LevelRules
+  _levelData:
+    modifyMovementStruct:
+      blinkData:
+        blinkStruct:
+          maxCharges: 0
+          currentCharge: 0
+          isUnlocked: 0
+        blinkDistance: 0
+        blinkDuration: 0
+        blinkDistanceCheck: 0
+        blinkDistanceBuff:
+          tempBuffs: 0
+          permBuffs: 0
+      dashData:
+        dashStruct:
+          maxCharges: 0
+          currentCharge: 0
+          isUnlocked: 0
+        dashSpeed: 0
+        dashDuration: 0
+        dashSpeedBuff:
+          tempBuffs: 0
+          permBuffs: 0
+        dashDurationBuff:
+          tempBuffs: 0
+          permBuffs: 0
+      jumpData:
+        jumpStruct:
+          maxCharges: 0
+          currentCharge: 0
+          isUnlocked: 0
+        jumpForce: 0
+        jumpForceBuff:
+          tempBuffs: 0
+          permBuffs: 0
+      movementData:
+        movementSpeed: 0
+        isUnlocked: 0
+        movementSpeedBuff:
+          tempBuffs: 0
+          permBuffs: 0
+    levelMode: 0
+    allowedFeatures: 0
+    checkPointCurrencyAmount: 0
+    completionCurrencyAmount: 0

@@ -24,6 +24,8 @@ public struct BlinkData
     [JsonIgnore]
     public float BlinkDistanceCheck => blinkDistanceCheck;
 
+    public StatBuffs blinkDistanceBuff;
+
     public void ModifyDistance(float amount)
     {
         blinkDistance += amount;
@@ -31,6 +33,11 @@ public struct BlinkData
     public void IncreaseCharge(int amount)
     {
         blinkStruct.IncreaseCharge(amount);
+    }
+
+    public void ModifyDistanceCheck(float amount)
+    {
+        blinkDistanceCheck += amount;
     }
 
     public void Unlock() => blinkStruct.Unlock();
@@ -41,5 +48,10 @@ public struct BlinkData
         blinkDuration = 0.3f;
         blinkDistanceCheck = 5f;
         blinkStruct.SetDefaults(1);
+    }
+
+    public float TotalDistance()
+    {
+        return blinkDistance + blinkDistanceBuff.TotalBuffs();
     }
 }

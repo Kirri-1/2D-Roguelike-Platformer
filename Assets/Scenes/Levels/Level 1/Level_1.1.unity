@@ -150,6 +150,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 308510405}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &125149111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 125149113}
+  - component: {fileID: 125149112}
+  m_Layer: 0
+  m_Name: PlaceHolderLevelLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &125149112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125149111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e51eb9e8b365ea4bb269bcf68d01610, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceHolderLevelLoader
+  LevelRegistry: {fileID: 11400000, guid: 323d3a6107e664b4395594d05652474b, type: 2}
+--- !u!4 &125149113
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125149111}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.33083, y: -4.57378, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &166585401
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,6 +347,97 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PowerUps.Blockers.BlinkBlocker
   completelyBlock: 0
+--- !u!1 &191998660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 191998662}
+  - component: {fileID: 191998661}
+  m_Layer: 0
+  m_Name: LevelRunState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &191998661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191998660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0fa9a32b7f9f8547aeca3fd27f8ff49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelRunState
+  currentLevelId: Level 1
+  currentMode: 0
+  customData:
+    modifyMovementStruct:
+      blinkData:
+        blinkStruct:
+          maxCharges: 0
+          currentCharge: 0
+          isUnlocked: 0
+        blinkDistance: 0
+        blinkDuration: 0
+        blinkDistanceCheck: 0
+        blinkDistanceBuff:
+          tempBuffs: 0
+          permBuffs: 0
+      dashData:
+        dashStruct:
+          maxCharges: 0
+          currentCharge: 0
+          isUnlocked: 0
+        dashSpeed: 0
+        dashDuration: 0
+        dashSpeedBuff:
+          tempBuffs: 0
+          permBuffs: 0
+        dashDurationBuff:
+          tempBuffs: 0
+          permBuffs: 0
+      jumpData:
+        jumpStruct:
+          maxCharges: 0
+          currentCharge: 0
+          isUnlocked: 0
+        jumpForce: 0
+        jumpForceBuff:
+          tempBuffs: 0
+          permBuffs: 0
+      movementData:
+        movementSpeed: 0
+        isUnlocked: 0
+        movementSpeedBuff:
+          tempBuffs: 0
+          permBuffs: 0
+    levelMode: 0
+    allowedFeatures: 0
+    checkPointCurrencyAmount: 0
+    completionCurrencyAmount: 0
+--- !u!4 &191998662
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191998660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.33083, y: -4.57378, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &308510404
 GameObject:
   m_ObjectHideFlags: 0
@@ -1771,6 +1907,9 @@ MonoBehaviour:
     blinkDistance: 0
     blinkDuration: 0
     blinkDistanceCheck: 0
+    blinkDistanceBuff:
+      tempBuffs: 0
+      permBuffs: 0
   dashData:
     dashStruct:
       maxCharges: 0
@@ -1778,6 +1917,12 @@ MonoBehaviour:
       isUnlocked: 0
     dashSpeed: 0
     dashDuration: 0
+    dashSpeedBuff:
+      tempBuffs: 0
+      permBuffs: 0
+    dashDurationBuff:
+      tempBuffs: 0
+      permBuffs: 0
   gravityData:
     gravityStruct:
       maxCharges: 0
@@ -1792,12 +1937,22 @@ MonoBehaviour:
       currentCharge: 0
       isUnlocked: 0
     jumpForce: 0
+    jumpForceBuff:
+      tempBuffs: 0
+      permBuffs: 0
   movementData:
     movementSpeed: 0
     isUnlocked: 0
+    movementSpeedBuff:
+      tempBuffs: 0
+      permBuffs: 0
   currencyData:
     currencyAmount: 0
     allowedDebtAmount: 0
+    currencyMultiplier:
+      tempBuffs: 0
+      permBuffs: 0
+  doSaveBool: 1
   doSave: 0
 --- !u!1 &1461918937
 GameObject:
@@ -1982,6 +2137,51 @@ Transform:
   m_Children:
   - {fileID: 702730050}
   - {fileID: 1258981547}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1529609310
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1529609312}
+  - component: {fileID: 1529609311}
+  m_Layer: 0
+  m_Name: LevelRulesScript
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1529609311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529609310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c562ac9c3e2a43419893123a1cc3439, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Level.Rules.LevelRulesScript
+  _levelRules: {fileID: 11400000, guid: 64c5cde64be15f246a3c79717d2e76c8, type: 2}
+--- !u!4 &1529609312
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529609310}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.33083, y: -4.57378, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1673921359
@@ -2347,3 +2547,6 @@ SceneRoots:
   - {fileID: 606307380}
   - {fileID: 1463622571}
   - {fileID: 1425611350}
+  - {fileID: 1529609312}
+  - {fileID: 125149113}
+  - {fileID: 191998662}

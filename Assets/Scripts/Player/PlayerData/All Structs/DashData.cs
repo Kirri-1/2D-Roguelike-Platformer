@@ -18,6 +18,9 @@ namespace Player.Movement.Structs
         [JsonIgnore]
         public float DashDuration => dashDuration;
 
+        public StatBuffs dashSpeedBuff;
+        public StatBuffs dashDurationBuff;
+
         public void ModifySpeed(float amount)
         {
             dashSpeed += amount;
@@ -40,6 +43,16 @@ namespace Player.Movement.Structs
             dashSpeed = 40f;
             dashDuration = 0.15f;
             dashStruct.SetDefaults(1);
+        }
+
+        public float TotalSpeed()
+        {
+            return dashSpeed + dashSpeedBuff.TotalBuffs();
+        }
+
+        public float TotalDuration()
+        {
+            return dashDuration + dashDurationBuff.TotalBuffs();
         }
     }
 }
