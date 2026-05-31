@@ -4,24 +4,18 @@ using Player.Movement.SharedProperties;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Player.Data;
+using Player.InputManagerN;
+using Player.Movement.Core;
 
 namespace Player.Movement.DashN
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(CancelMovementEnums))]
-    [RequireComponent(typeof(PlayerData))]
-    public class Dash : MonoBehaviour
+    public class Dash : AbstractPlayerAbilities
     {
-        PlayerData playerData;
-        PlayerMovement playerMovement;
-
         InputAction dashAction;
         InputAction moveAction;
 
         bool dashRequested = false;
-
-        Rigidbody2D playerRb;
-        GroundCheck groundCheck;
 
         [Header("Dash Settings")]
         [SerializeField]
@@ -35,27 +29,11 @@ namespace Player.Movement.DashN
 
         Coroutine dashCoroutine;
 
-        CancelMovementEnums cancelMovementEnums;
-        private void Awake()
+        protected override void Awake()
         {
-            playerData = GetComponent<PlayerData>();
-            groundCheck = GetComponent<GroundCheck>();
-            playerRb = GetComponent<Rigidbody2D>();
-            playerMovement = new PlayerMovement();
-            dashAction = playerMovement.Player.Dash;
-            moveAction = playerMovement.Player.Movement;
-            cancelMovementEnums = GetComponent<CancelMovementEnums>();
-        }
-
-        private void OnEnable()
-        {
-            dashAction.Enable();
-            moveAction.Enable();
-        }
-        private void OnDisable()
-        {
-            dashAction.Disable();
-            moveAction.Disable();
+            base.Awake();
+            dashAction = inputManager.PlayerInput.Player.Dash;
+            moveAction = inputManager.PlayerInput.Player.Movement;
         }
 
         private void Update()

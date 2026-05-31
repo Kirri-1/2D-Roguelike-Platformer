@@ -27,14 +27,21 @@ namespace Player.Movement.Structs
         public bool IsUnlocked => isUnlocked;
 
         public void ResetCharges() => currentCharge = 0;
-        public void ConsumeCharge()
+        public void ConsumeCharge(int amount = 1)
         {
-            currentCharge = Mathf.Min(currentCharge + 1, maxCharges);
+            currentCharge = Mathf.Min(currentCharge + amount, maxCharges);
         }
 
         public void IncreaseCharge(int amount = 1)
         {
             maxCharges += amount;
+        }
+
+        public void RecoverCharge(int amount = 1)
+        {
+            if (amount <= 0)
+                return;
+            currentCharge = Mathf.Max(currentCharge - amount, 0);
         }
 
         public void Unlock() => isUnlocked = true;

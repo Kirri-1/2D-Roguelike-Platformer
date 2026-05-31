@@ -6,54 +6,35 @@ using Player.Checks;
 using Player.Movement.SharedProperties;
 using Player.PowerUps.Blockers;
 using Level.Rules;
+using Player.Data;
+using Player.InputManagerN;
+using Player.Movement.Core;
 
 namespace Player.PowerUps
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(CancelMovementEnums))]
     [RequireComponent(typeof(CapsuleCollider2D))]
-    [RequireComponent(typeof(PlayerData))]
-    public class Blink : MonoBehaviour
+    public class Blink : AbstractPlayerAbilities
     {
-        Rigidbody2D playerRb;
         CapsuleCollider2D playerCollider;
-        PlayerData playerData;
 
-        PlayerMovement playerMovement;
         InputAction blinkAction;
         InputAction moveAction;
         bool blinkRequested = false;
-        GroundCheck groundCheck;
 
-        CancelMovementEnums cancelMovementEnums;
         Coroutine blinkCoroutine;
 
         private RaycastHit2D[] blinkHits = new RaycastHit2D[64];
         private ContactFilter2D blinkFilter = ContactFilter2D.noFilter;
 
-        private void Awake()
+        protected override void Awake()
         {
-            playerData = GetComponent<PlayerData>();
+            base.Awake();
             playerCollider = GetComponent<CapsuleCollider2D>();
-            playerRb = GetComponent<Rigidbody2D>();
-            playerMovement = new PlayerMovement();
-            blinkAction = playerMovement.Player.Blink;
-            moveAction = playerMovement.Player.Movement;
-            cancelMovementEnums = GetComponent<CancelMovementEnums>();
-            groundCheck = GetComponent<GroundCheck>();
+            blinkAction = inputManager.PlayerInput.Player.Blink;
+            moveAction = inputManager.PlayerInput.Player.Movement;
             blinkFilter.useTriggers = true;
         }
 
-        private void OnEnable()
-        {
-            blinkAction.Enable();
-            moveAction.Enable();
-        }
-        private void OnDisable()
-        {
-            blinkAction.Disable();
-            moveAction.Disable();
-        }
         void Update()
         {
             if (blinkAction.triggered)

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Player.Data;
 
 namespace Player.Movement.PowerUps
 {

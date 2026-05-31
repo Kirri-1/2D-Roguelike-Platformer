@@ -2,37 +2,20 @@ using Level.Rules;
 using Player.Movement.SharedProperties;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Player.Data;
+using Player.InputManagerN;
+using Player.Movement.Core;
 
 namespace Player.Movement.Standard
-{
-    [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(CancelMovementEnums))]
-    [RequireComponent(typeof(PlayerData))]
-    public class Movement : MonoBehaviour
+{    
+    public class Movement : AbstractPlayerAbilities
     {
-        PlayerMovement playerMovement;
         InputAction moveAction;
 
-        PlayerData playerData;
-
-        private Rigidbody2D playerRb;
-        CancelMovementEnums cancelMovementEnums;
-
-        private void Awake()
+        protected override void Awake()
         {
-            playerData = GetComponent<PlayerData>();
-            playerMovement = new PlayerMovement();
-            moveAction = playerMovement.Player.Movement;
-            cancelMovementEnums = GetComponent<CancelMovementEnums>();
-            playerRb = GetComponent<Rigidbody2D>();
-        }
-        private void OnEnable()
-        {
-            moveAction.Enable();
-        }
-        private void OnDisable()
-        {
-            moveAction.Disable();
+            base.Awake();
+            moveAction = inputManager.PlayerInput.Player.Movement;
         }
 
         private void FixedUpdate()

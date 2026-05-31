@@ -5,21 +5,14 @@ using Player.Checks;
 using DebugN;
 using Player.Movement.SharedProperties;
 using Level.Rules;
+using Player.Data;
+using Player.InputManagerN;
+using Player.Movement.Core;
 
 namespace Player.Movement.Standard
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(GroundCheck))]
-    [RequireComponent(typeof(CancelMovementEnums))]
-    [RequireComponent(typeof(PlayerData))]
-    public class Jump : MonoBehaviour
+    public class Jump : AbstractPlayerAbilities
     {
-        GroundCheck groundCheck;
-        Rigidbody2D playerRb;
-        CancelMovementEnums cancelMovementEnums;
-
-        PlayerData playerData;
-        PlayerMovement playerMovement;
         InputAction jumpAction;
 
         public bool jumpRequested = false;
@@ -31,23 +24,10 @@ namespace Player.Movement.Standard
     //};
     //         ^ potential future stuff? Keeping it just in case
 
-        private void Awake()
+        protected override void Awake()
         {
-            playerData = GetComponent<PlayerData>();
-            playerRb = GetComponent<Rigidbody2D>();
-            cancelMovementEnums = GetComponent<CancelMovementEnums>();
-            groundCheck = GetComponent<GroundCheck>();
-            playerMovement = new PlayerMovement();
-            jumpAction = playerMovement.Player.Jump;
-        }
-
-        private void OnEnable()
-        {
-            jumpAction.Enable();
-        }
-        private void OnDisable()
-        {
-            jumpAction.Disable();
+            base.Awake();
+            jumpAction = inputManager.PlayerInput.Player.Jump;
         }
 
         void Update()
