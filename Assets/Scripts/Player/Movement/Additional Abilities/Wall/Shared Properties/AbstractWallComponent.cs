@@ -1,14 +1,17 @@
-using UnityEngine;
+using System.Collections.Generic;
 using Player.Data;
-using UnityEngine.InputSystem;
 using Player.InputManagerN;
 using System.Linq;
-namespace Player.Movement.AdditionalAbilities
+using UnityEngine;
+using UnityEngine.InputSystem;
+using Systems.Gravity;
+namespace Player.Movement.AdditionalAbilities.WallAbilities
 {
     [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(WallStateComponent))]
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(InputManager))]
+    [RequireComponent(typeof(Gravity))]
     public abstract class AbstractWallComponent : MonoBehaviour
     {
         protected PlayerData playerData;
@@ -17,13 +20,15 @@ namespace Player.Movement.AdditionalAbilities
         protected Rigidbody2D playerRb;
         protected InputAction moveAction;
         protected InputManager inputManager;
+        ContactFilter2D wallFilter = ContactFilter2D.noFilter;
+        List<Collider2D> nearbyWalls = new List<Collider2D>();
         protected virtual void Awake()
         {
-            inputManager = GetComponent<InputManager>();
-            moveAction = inputManager.PlayerInput.Player.Movement;
+            moveAction = InputManager.Instance.PlayerInput.Player.Movement;
             playerData = GetComponent<PlayerData>();
             wallState = GetComponent<WallStateComponent>();
             playerRb = GetComponent<Rigidbody2D>();
+            inputManager = InputManager.Instance;
         }
 
         protected virtual void Update()
@@ -33,11 +38,29 @@ namespace Player.Movement.AdditionalAbilities
 
         protected virtual void OnCollisionEnter2D(Collision2D collision)
         {
+            //Debug.Log("Collided with: " + collision.gameObject.name);
             if (currentWall != null && currentWall.gameObject == collision.gameObject)
+            {
+                //Debug.Log("Already on this wall, ignoring collision. OR, currentWall isn't null");
                 return;
+            }
             if (!collision.gameObject.TryGetComponent<Wall>(out Wall thisWall))
+            {
+                //Debug.Log("Collided object isn't a wall, ignoring collision.");
                 return;
+            }
             currentWall = thisWall;
+        }
+
+        protected Wall GetWall()
+        {
+            Physics2D.OverlapCircle(transform.position, 1f, wallFilter, nearbyWalls);
+            foreach(var obj in nearbyWalls)
+            {
+                if (obj.gameObject.TryGetComponent<Wall>(out Wall wall))
+                    return wall;
+            }
+            return null;
         }
 
         protected virtual void OnCollisionExit2D(Collision2D collision)

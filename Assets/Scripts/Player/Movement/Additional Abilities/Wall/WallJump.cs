@@ -2,7 +2,7 @@ using UnityEngine;
 using Player.Data;
 using UnityEngine.InputSystem;
 
-namespace Player.Movement.AdditionalAbilities
+namespace Player.Movement.AdditionalAbilities.WallAbilities.Jump
 {
     public class WallJump : AbstractWallComponent
     {
@@ -14,11 +14,12 @@ namespace Player.Movement.AdditionalAbilities
         InputAction jumpAction;
         [SerializeField]
         private int consumeCharge = 0; //TODO: make this integer a static number that actually consumes a decent amount of stamina
+        public Wall getWall;
 
         protected override void Awake()
         {
             base.Awake();
-            jumpAction = base.inputManager.PlayerInput.Player.Jump;
+            jumpAction = inputManager.PlayerInput.Player.Jump;
         }
 
 
@@ -38,6 +39,8 @@ namespace Player.Movement.AdditionalAbilities
             if (jumpAction.triggered)
                 wallJumpRequested = true;
             base.Update();
+            if(getWall != currentWall)
+                getWall = currentWall;
         }
 
         private void FixedUpdate()
@@ -49,12 +52,12 @@ namespace Player.Movement.AdditionalAbilities
                 wallJumpRequested = false;
                 return;
             }
-            if (IsCorrectWallState(WallStateComponent.WallStateType.Hold))
+            if (!IsCorrectWallState(WallStateComponent.WallStateType.Hold))
             {
                 wallJumpRequested = false;
                 return;
             }
-            if (playerData.staminaData.HasStamina())
+            if (!playerData.staminaData.HasStamina())
             {
                 wallJumpRequested = false;
                 return;
@@ -78,6 +81,7 @@ namespace Player.Movement.AdditionalAbilities
 
             playerRb.AddForce(faceDirection * wallJumpForce, ForceMode2D.Impulse);
             playerData.staminaData.staminaStruct.ConsumeCharge(consumeCharge);
+            Debug.Log("Wall Jumped");
             ResetWallState();
         }
 

@@ -14,7 +14,7 @@ namespace Level.Placeholder
         void Start()
         {
             LevelRunState.Instance.currentLevelId = "Level 1";
-            LevelRunState.Instance.currentMode = Level.Rules.LevelRulesData.LevelModeType.Challenge;
+            LevelRunState.Instance.currentMode = Level.Rules.LevelRulesData.LevelModeType.Vanilla;
 
             var rulesRef = LevelRegistry.GetRulesReference(LevelRunState.Instance.currentLevelId, LevelRunState.Instance.currentMode);
             Addressables.LoadAssetAsync<LevelRules>(rulesRef).Completed += OnRulesLoaded;

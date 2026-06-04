@@ -1,23 +1,24 @@
 using UnityEngine;
+using Singleton.SingletonN;
 
 namespace Player.InputManagerN
 {
-    public class InputManager : MonoBehaviour
+    public class InputManager : Singleton<InputManager>
     {
         PlayerMovement playerInput;
         public PlayerMovement PlayerInput => playerInput;
-        private void Awake()
+        protected override void Awake()
         {
             playerInput = new PlayerMovement();
         }
 
         private void OnEnable()
         {
-            playerInput.Enable();
+            playerInput.Player.Enable();
         }
         private void OnDisable()
         {
-            playerInput.Disable();
+            playerInput.Player.Disable();
         }
     }
 }

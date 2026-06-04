@@ -1,5 +1,4 @@
 using Level.Rules;
-using Player.Checks;
 using Player.Movement.SharedProperties;
 using System.Collections;
 using UnityEngine;
@@ -89,6 +88,7 @@ namespace Player.Movement.DashN
 
         public IEnumerator DashCoroutine(float dashSpeed, float dashDuration)
         {
+            gravity.SetDoGravity(false);
             Vector2 dashDirection = moveAction.ReadValue<Vector2>();
             if (dashDirection == Vector2.zero) dashDirection = Vector2.right;
             dashDirection = dashDirection.normalized;
@@ -96,6 +96,12 @@ namespace Player.Movement.DashN
             float elapsed = 0f;
             while (elapsed < dashDuration)
             {
+                if ((cancelMovementEnums.cancelMovementType & CancelMovementEnums.CancelMovementType.Dash) == 0)
+                {
+                    Debug.Log("Dash cancelled");
+                    gravity.SetDoGravity(true);
+                    yield break;
+                }
                 playerRb.linearVelocity = dashDirection * dashSpeed;
                 elapsed += Time.fixedDeltaTime;
                 yield return new WaitForFixedUpdate();
@@ -106,6 +112,7 @@ namespace Player.Movement.DashN
                 playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 0);
 
             cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Dash);
+            gravity.SetDoGravity(true);
         }
 
         public void IncreaseDashCharge(int amount = 1) => playerData.dashData.dashStruct.IncreaseCharge(amount);

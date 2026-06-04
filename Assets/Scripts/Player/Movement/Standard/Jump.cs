@@ -1,12 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Player.Checks;
 using DebugN;
 using Player.Movement.SharedProperties;
 using Level.Rules;
-using Player.Data;
-using Player.InputManagerN;
 using Player.Movement.Core;
 
 namespace Player.Movement.Standard
@@ -17,12 +13,14 @@ namespace Player.Movement.Standard
 
         public bool jumpRequested = false;
 
-    //    HashSet<CancelMovementEnums.CancelMovementType> jumpCancelEnums = new HashSet<CancelMovementEnums.CancelMovementType>()
-    //{
-    //    CancelMovementEnums.CancelMovementType.Attack,
-    //    CancelMovementEnums.CancelMovementType.Stun
-    //};
-    //         ^ potential future stuff? Keeping it just in case
+        //HashSet<CancelMovementEnums.CancelMovementType> jumpCancelEnums = new HashSet<CancelMovementEnums.CancelMovementType>()
+        //{
+        //    CancelMovementEnums.CancelMovementType.Attack,
+        //    CancelMovementEnums.CancelMovementType.Stun,
+        //    CancelMovementEnums.CancelMovementType.Knockback,
+        //    CancelMovementEnums.CancelMovementType.Blink
+        //};
+        //         ^ potential future stuff? Keeping it just in case
 
         protected override void Awake()
         {
@@ -38,6 +36,12 @@ namespace Player.Movement.Standard
                 return;
             }
 
+            if (jumpAction.WasReleasedThisFrame() && playerRb.linearVelocity.y > 0 && !gravity.JumpCut)
+                gravity.SetJumpCut(true);
+
+            if (playerRb.linearVelocity.y <= 0 && gravity.JumpCut)
+                gravity.SetJumpCut(false);
+
             ResetJump();
         }
 
@@ -51,11 +55,11 @@ namespace Player.Movement.Standard
                 jumpRequested = false;
                 return;
             }
-            if(cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
-            {
-                jumpRequested = false;
-                return;
-            }
+            //if(cancelMovementEnums.cancelMovementType != CancelMovementEnums.CancelMovementType.None)
+            //{
+            //    jumpRequested = false;
+            //    return;
+            //}
             float jumpForce = Mathf.Min(playerData.jumpData.TotalJumpForce(), levelData.JumpForce);
             JumpVoid(jumpForce);
             jumpRequested = false;
@@ -64,12 +68,14 @@ namespace Player.Movement.Standard
 
         void JumpVoid(float jumpForce)
         {
+            cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Dash);
+            Debug.Log("Removed Dash");
             playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 0f);
             playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpRequested = false;
             playerData.jumpData.jumpStruct.ConsumeCharge();
-            if (DebugMode.DebugModeActive)
-                Debug.Log("Player Jumped");
+            //if (DebugMode.DebugModeActive)
+            //    Debug.Log("Player Jumped");
         }
 
         void ResetJump()

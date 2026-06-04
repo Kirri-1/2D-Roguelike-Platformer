@@ -1,6 +1,7 @@
 using UnityEngine;
-
-namespace Player.Movement.AdditionalAbilities
+using Player.Movement.AdditionalAbilities.WallAbilities.Hold;
+using Player.Movement.AdditionalAbilities.WallAbilities.Jump;
+namespace Player.Movement.AdditionalAbilities.WallAbilities
 {
     [RequireComponent(typeof(WallClimb))]
     [RequireComponent(typeof(WallHold))]

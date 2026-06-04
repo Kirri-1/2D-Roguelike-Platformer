@@ -16,7 +16,7 @@ namespace Player.Movement.Structs
         public PlayerState state;
         public StatBuffs staminaStatBuffs;
 
-        public float TotalStamina() => staminaStruct.MaxCharges + staminaStatBuffs.TotalBuffs();
+        public int TotalStamina() => Mathf.CeilToInt(staminaStruct.MaxCharges + staminaStatBuffs.TotalBuffs());
 
         public bool HasStamina() => staminaStruct.CurrentCharge < TotalStamina();
     }

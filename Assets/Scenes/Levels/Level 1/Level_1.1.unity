@@ -224,7 +224,7 @@ Transform:
   m_GameObject: {fileID: 149783840}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 90.3, y: 13, z: 0}
+  m_LocalPosition: {x: 27.5, y: 13, z: 0}
   m_LocalScale: {x: 55, y: 1.5071003, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -542,7 +542,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelRunState
   currentLevelId: Level 1
-  currentMode: 1
+  currentMode: 0
   customData:
     modifyMovementStruct:
       blinkData:
@@ -584,7 +584,7 @@ MonoBehaviour:
         movementSpeedBuff:
           tempBuffs: 0
           permBuffs: 0
-    levelMode: 1
+    levelMode: 0
     allowedFeatures: 0
     checkPointCurrencyAmount: 0
     completionCurrencyAmount: 0
@@ -1888,6 +1888,7 @@ GameObject:
   - component: {fileID: 1457248462}
   - component: {fileID: 1457248467}
   - component: {fileID: 1457248466}
+  - component: {fileID: 1457248468}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -1907,6 +1908,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de0c3dac0bb202942aa048789b734a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Movement
+  deceleration: 30
 --- !u!70 &1457248449
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -2039,7 +2041,7 @@ Transform:
   m_GameObject: {fileID: 1457248446}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.72307, y: -2.3, z: 0}
+  m_LocalPosition: {x: -21.3, y: -7.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2252,6 +2254,7 @@ MonoBehaviour:
   wallJumpForce: 15
   wallJumpRequested: 0
   consumeCharge: 0
+  getWall: {fileID: 0}
 --- !u!114 &1457248464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2264,6 +2267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e1a9b45c8e12684ca0f320961abdc2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallHold
+  consumeCharge: 0
 --- !u!114 &1457248465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2301,6 +2305,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c7a06146098e6c40b0bf7c96f46f552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.InputManagerN.InputManager
+--- !u!114 &1457248468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1457248446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6558e2d7493055648b1d9d20beccf115, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Systems.Gravity.Gravity
+  gravityStrength: 50
+  riseMultiplier: 1
+  fallMultiplier: 5
+  terminalVelocity: -20
+  doGravity: 1
+  jumpCut: 0
+  jumpCutMultiplier: 3
 --- !u!1 &1461918937
 GameObject:
   m_ObjectHideFlags: 0

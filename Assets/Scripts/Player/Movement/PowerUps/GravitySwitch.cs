@@ -1,18 +1,16 @@
 using UnityEngine;
 using Player.Data;
+using Player.Movement.Core;
 
 namespace Player.Movement.PowerUps
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(PlayerData))]
-    public class GravitySwitch : MonoBehaviour
+    public class GravitySwitch : AbstractPlayerAbilities
     {
-        Rigidbody2D playerRb;
-        PlayerData playerData;
-        private void Awake()
+        protected override void Awake()
         {
-            playerRb = GetComponent<Rigidbody2D>();
-            playerData = GetComponent<PlayerData>();
+            base.Awake();
         }
         public void SetGravity(float gravityScale)
         {

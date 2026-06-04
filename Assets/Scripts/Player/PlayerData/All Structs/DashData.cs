@@ -40,8 +40,8 @@ namespace Player.Movement.Structs
 
         public void SetDefaults()
         {
-            dashSpeed = 40f;
-            dashDuration = 0.15f;
+            dashSpeed = 20f;
+            dashDuration = 0.2f;
             dashStruct.SetDefaults(1);
         }
 

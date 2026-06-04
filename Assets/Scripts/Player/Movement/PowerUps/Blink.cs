@@ -2,12 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using DebugN;
-using Player.Checks;
 using Player.Movement.SharedProperties;
 using Player.PowerUps.Blockers;
 using Level.Rules;
-using Player.Data;
-using Player.InputManagerN;
 using Player.Movement.Core;
 
 namespace Player.PowerUps
@@ -137,12 +134,12 @@ namespace Player.PowerUps
                         Debug.Log("Blink cancelled due to short distance");
                     return;
                 }
-                transform.position = newLocation;
+                playerRb.position = newLocation;
             }
             else
             {
                 newLocation = (Vector2)transform.position + moveDirection * castDistance;
-                transform.position = newLocation;
+                playerRb.position = newLocation;
             }
             playerRb.linearVelocity = Vector2.zero;
 
@@ -167,7 +164,9 @@ namespace Player.PowerUps
 
         IEnumerator BlinkCoroutine()
         {
-            yield return new WaitForSeconds(playerData.blinkData.BlinkDuration);
+            int ticks = Mathf.RoundToInt(playerData.blinkData.BlinkDuration / Time.fixedDeltaTime);
+            for (int i = 0; i < ticks; i++)
+                yield return new WaitForFixedUpdate();
             cancelMovementEnums.RemoveCancelMovementType(CancelMovementEnums.CancelMovementType.Blink);
         }
         Vector2 GetBlinkDirection(Vector2 moveInput)
