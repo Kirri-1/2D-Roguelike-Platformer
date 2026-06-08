@@ -2603,9 +2603,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6558e2d7493055648b1d9d20beccf115, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Systems.Gravity.Gravity
-  gravityStrength: 35
+  gravityStrength: 25
   riseMultiplier: 0.9
-  fallMultiplier: 4.07
+  fallMultiplier: 10
   terminalVelocity: -20
   doGravity: 1
   jumpCut: 0
@@ -2824,7 +2824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c562ac9c3e2a43419893123a1cc3439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level.Rules.LevelRulesScript
-  _levelRules: {fileID: 11400000, guid: 64c5cde64be15f246a3c79717d2e76c8, type: 2}
+  _levelRules: {fileID: 11400000, guid: 85e604055aac3d2488c6aeb11636f87e, type: 2}
 --- !u!4 &1529609312
 Transform:
   m_ObjectHideFlags: 0

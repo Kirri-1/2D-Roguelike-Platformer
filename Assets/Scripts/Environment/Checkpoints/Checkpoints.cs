@@ -32,5 +32,7 @@ namespace Level.Checkpoints
             gameObject.SetActive(false);
         }
         public void ResetCheckpointTriggered() => wasTriggered = false;
+
+        public void SetCheckpointCurrency(int newCurrencyValue) => checkpointCurrency = newCurrencyValue;
     }
 }
