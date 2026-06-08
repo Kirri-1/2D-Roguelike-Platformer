@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using Singleton.SingletonN;
+using Player.Respawn.Owner;
 
 namespace Scenes.Transitions
 {

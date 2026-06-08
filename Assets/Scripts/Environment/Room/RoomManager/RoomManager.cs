@@ -1,7 +1,7 @@
 using UnityEngine;
 using Singleton.SingletonN;
 using RoomN.RoomInfo;
-using RoomN.RoomBoundary;
+using Player.Respawn.Owner;
 
 namespace RoomN.Manager
 {

@@ -1,32 +1,36 @@
 using Player.HurtBox;
 using UnityEngine;
+using Player.Respawn.Owner;
 
-[RequireComponent(typeof(Collider2D))]
-public class RespawnCheck : MonoBehaviour
+namespace Environment.Hazards
 {
-    [SerializeField]
-    Collider2D col;
-    private void Awake()
+    [RequireComponent(typeof(Collider2D))]
+    public class RespawnCheck : MonoBehaviour
     {
-        if(col == null)
-            col = GetComponent<Collider2D>();
-        col.isTrigger = true;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.TryGetComponent(out HurtBoxComponent hurtBox))
+        [SerializeField]
+        Collider2D col;
+        private void Awake()
         {
-            //if(Player is immortal && objectIsNotDeathVoid)
-            //return;
+            if (col == null)
+                col = GetComponent<Collider2D>();
+            col.isTrigger = true;
+        }
 
-            RespawnOwner owner = collision.GetComponentInParent<RespawnOwner>();
-            if (owner == null)
-                return;
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.TryGetComponent(out HurtBoxComponent hurtBox))
+            {
+                //if(Player is immortal && objectIsNotDeathVoid)
+                //return;
 
-            //later on I can do sounds, animations, etc. Although that may be within the RespawnOwner script instead,
-            //with each Respawn having it's own animation and sounds that I pass in through the parameters.
-            owner.Respawn();
+                RespawnOwner owner = collision.GetComponentInParent<RespawnOwner>();
+                if (owner == null)
+                    return;
+
+                //later on I can do sounds, animations, etc. Although that may be within the RespawnOwner script instead,
+                //with each Respawn having it's own animation and sounds that I pass in through the parameters.
+                owner.Respawn();
+            }
         }
     }
 }

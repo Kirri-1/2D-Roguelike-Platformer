@@ -1,37 +1,41 @@
 using System.Linq;
 using UnityEngine;
+using Player.Respawn.Owner;
 
-[RequireComponent(typeof(CircleCollider2D))]
-public class TransitionTrigger : MonoBehaviour
+namespace Scenes.Transitions
 {
-    CircleCollider2D _collider;
-    [SerializeField]
-    Transform destination;
-    GameObject _camera;
-    [SerializeField]
-    Transform nextRoomCameraPosition;
-    private void Awake()
+    [RequireComponent(typeof(CircleCollider2D))]
+    public class TransitionTrigger : MonoBehaviour
     {
-        _collider = GetComponent<CircleCollider2D>();
-        _collider.isTrigger = true;
-        _camera = GameObject.FindGameObjectWithTag("MainCamera");
-        if(!_camera)
+        CircleCollider2D _collider;
+        [SerializeField]
+        Transform destination;
+        GameObject _camera;
+        [SerializeField]
+        Transform nextRoomCameraPosition;
+        private void Awake()
         {
-            Debug.LogError("No camera found in the scene with the tag 'Camera'. Please assign the correct tag to your camera.");
+            _collider = GetComponent<CircleCollider2D>();
+            _collider.isTrigger = true;
+            _camera = GameObject.FindGameObjectWithTag("MainCamera");
+            if (!_camera)
+            {
+                Debug.LogError("No camera found in the scene with the tag 'Camera'. Please assign the correct tag to your camera.");
+            }
         }
-    }
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!collision.CompareTag("Player"))
-            return;
-
-        if (collision.TryGetComponent(out RespawnOwner respawnOwner))
+        private void OnTriggerEnter2D(Collider2D collision)
         {
-            respawnOwner.SetRespawnSwitch(true);
-            _camera.transform.position = nextRoomCameraPosition.position;
-            //camera transition
+            if (!collision.CompareTag("Player"))
+                return;
+
+            if (collision.TryGetComponent(out RespawnOwner respawnOwner))
+            {
+                respawnOwner.SetRespawnSwitch(true);
+                _camera.transform.position = nextRoomCameraPosition.position;
+                //camera transition
+            }
         }
     }
 }
